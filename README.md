@@ -22,6 +22,8 @@ Annotate fields with {@Constant} and then run the Maven plugin. Ensure that all 
 The impact of using Cherimoya in your project is that a single new class, the {@Constant} annotation,
 is added to your annotated classes and the annotation is retained in class files.
 
+Skip execution by setting ``cherimoya.skip'' to ``true''.
+
 ## Links
 
 - [Motivating question on StackOverflow](https://stackoverflow.com/questions/41393794/good-practices-for-breaking-maven-build-when-specific-class-members-change-val)

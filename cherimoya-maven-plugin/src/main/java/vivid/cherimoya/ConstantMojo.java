@@ -22,12 +22,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.i18n.I18N;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * TODO
@@ -42,32 +42,36 @@ public class ConstantMojo
         extends AbstractMojo
 {
     /**
+     * Flag to easily skip execution.
+     *
+     * @parameter property="cherimoya.skip" default-value="false"
+     */
+    protected boolean skip;
+
+    /**
      * @component
      */
     private I18N i18n;
 
-    // TODO Get the GAV of the current project -> gather all available versions of G&A from repo.
-    // TODO Scan the generated classes.
-    // TODO Scan classes in each version's JARs.
-    // TODO INFO: "Scanning 57 @Constant's in 4 versions of yacht-lib: 1.0, 1.1, 1.2, 1.2.1"
-    // TODO Compute and report.
-    // TODO "skip"
-
-
-
-
-
-
-
-    /**
-     * Location of the file.
-     */
-    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
-    private File outputDirectory;
-
     public void execute()
             throws MojoExecutionException
     {
+        final Locale locale = Locale.getDefault();
+
+        if (skip) {
+            getLog().info(i18n.format("vivid.cherimoya.actions.skipping-execution", locale));
+            return;
+        }
+
+
+
+
+
+        // TODO Get the GAV of the current project -> gather all available versions of G&A from repo.
+        // TODO Scan the generated classes.
+        // TODO Scan classes in each version's JARs.
+        // TODO Compute and report.
+
         File f = outputDirectory;
 
         if ( !f.exists() )
@@ -103,5 +107,11 @@ public class ConstantMojo
             }
         }
     }
+
+    /**
+     * Location of the file.
+     */
+    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
+    private File outputDirectory;
 
 }
