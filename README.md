@@ -28,6 +28,6 @@ is added to your annotated classes and the annotation is retained in class files
 
 ## TODO
 
-- Convert Maven project to multi-module and create the Maven Plugin project, code, tests, and usage documentation.
+- Create the Maven Plugin project, code, tests, and usage documentation.
 - Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used.
 - Bake the motivation and principles into the documentation.
