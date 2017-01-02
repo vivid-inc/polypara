@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+~ Copyright 2017 Vivid Inc.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>vivid.cherimoya</groupId>
+    <artifactId>vivid-cherimoya</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <organization>
+        <name>Vivid Inc.</name>
+        <url>https://vivid-inc.net</url>
+    </organization>
+    <name>Vivid Cherimoya</name>
+    <description>Toolkit for software quality automation.</description>
+    <url>https://github.com/vivid-inc/cherimoya</url>
+    <scm>
+      <url>https://github.com/vivid-inc/cherimoya</url>
+    </scm>
+    <inceptionYear>2017</inceptionYear>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>Copyright (c) 2017 Vivid Inc.</comments>
+        </license>
+    </licenses>
+
+    <properties>
+        <jdk.version>1.7</jdk.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- Configure the Maven compiler plugin in projects that inherit from this one. -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>-Xlint:all</arg>
+                        </compilerArgs>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
