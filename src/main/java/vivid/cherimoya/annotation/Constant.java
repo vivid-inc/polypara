@@ -22,14 +22,16 @@ import java.lang.annotation.Target;
 /**
  * Signifies that the annotated element is expected to bear the same value since inception and throughout
  * ensuing releases.
- * A qualifying element has the same fully qualified class name identifier and field identifier. As a running example:
+ * Use when considering a class field and you think to yourself: "The value of this field cannot change, even in successive versions."
+ *
+ * A qualifying element has the same fully qualified class name identifier and field identifier. As an example:
  *
  * <pre>
  * package summer.breeze;
  *
  * class Yacht {
  *     {@literal @}Constant
- *     static final LENGTH = 2370;
+ *     static final int LENGTH_MM = 9700;
  *     ...
  * }
  * </pre>
@@ -38,6 +40,8 @@ import java.lang.annotation.Target;
  * {@code summer.breeze.Yacht.LENGTH} is expected to constantly have the same value integer value of {@code 2370}
  * contiguously in all available packaged versions from the field's first appearance throughout its last.
  * The field is also expected to be annotated as {@code @Constant} in all relevant versions.</p>
+ *
+ * <p>The field value must be a Java primitive.</p>
  *
  * @since 1.0.0
  */
