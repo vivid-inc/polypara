@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  *
  * <p>The field value must be a Java primitive.</p>
  *
- * @since 1.0.0
+ * @since 1.0
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({

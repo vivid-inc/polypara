@@ -12,7 +12,7 @@ To add a dependency on Cherimoya using Maven, use the following:
 <dependency>
   <groupId>vivid.cherimoya</groupId>
   <artifactId>vivid-cherimoya</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <scope>compile</scope>
 </dependency>
 ```

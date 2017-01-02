@@ -21,10 +21,10 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>constant</id>
-            <phase>validate</phase>
+            <id>verify-constants</id>
+            <phase>process-classes</phase>
             <goals>
-              <goal>constant</goal>
+              <goal>verify-constants</goal>
             </goals>
           </execution>
         </executions>
