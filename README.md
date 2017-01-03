@@ -11,18 +11,20 @@ To add a dependency on Cherimoya using Maven, use the following:
 ```xml
 <dependency>
   <groupId>vivid.cherimoya</groupId>
-  <artifactId>vivid-cherimoya</artifactId>
+  <artifactId>cherimoya</artifactId>
   <version>1.0-SNAPSHOT</version>
   <scope>compile</scope>
 </dependency>
 ```
 
-Annotate fields with {@Constant} and then run the Maven plugin. Ensure that all desired versions are available in your local Maven repo.
+Annotate fields with {@Constant} and then run the Maven plugin.
+Ensure that all desired versions are available in your local Maven repo.
+Ignores field visibility.
 
 The impact of using Cherimoya in your project is that a single new class, the {@Constant} annotation,
 is added to your annotated classes and the annotation is retained in class files.
 
-Skip execution by setting ``cherimoya.skip'' to ``true''.
+Skip execution by setting the ``skip'' configuration parameter to ``true''.
 
 ## Links
 
