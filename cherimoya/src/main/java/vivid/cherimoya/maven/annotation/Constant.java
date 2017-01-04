@@ -12,7 +12,7 @@
  * the License.
  */
 
-package vivid.cherimoya.annotation;
+package vivid.cherimoya.maven.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -44,6 +44,14 @@ import java.lang.annotation.Target;
  * <p>The field value must be a Java primitive.</p>
  *
  * @since 1.0
+ */
+/*
+ * Design Decisions
+ * ----
+ *
+ * An annotation is used because the annotation is stored in the Java .class file and is machine readable even after the
+ * artifact is published. Alternatively, using a keyword in a comment is susceptible to mispelling that won't be caught
+ * by the build, and the comment is not preserved in the .class file.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({

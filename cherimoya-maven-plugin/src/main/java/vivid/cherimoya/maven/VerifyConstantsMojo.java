@@ -1,5 +1,3 @@
-package vivid.cherimoya;
-
 /*
  * Copyright (C) 2017 The Cherimoya Authors
  *
@@ -16,6 +14,9 @@ package vivid.cherimoya;
  * limitations under the License.
  */
 
+package vivid.cherimoya.maven;
+
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -32,14 +33,12 @@ import java.util.*;
  * @since 1.0
  */
 @Mojo(
-        name = "verify-constants",
+        name = "verify",
         defaultPhase = LifecyclePhase.PROCESS_CLASSES
 )
 public class VerifyConstantsMojo
         extends AbstractMojo
 {
-
-    private static final String I18N_RESOURCE_BUNDLE = "cherimoya-i18n";
 
     /**
      * Flag to easily skip execution.
@@ -65,15 +64,30 @@ public class VerifyConstantsMojo
      * @since 1.0
      */
     @Parameter
-    private String[] includeVersions; // TODO
+    private String[] requireVersions; // TODO
 
     public void execute()
             throws MojoExecutionException
     {
+        final Factory factory = new Factory(
+                i18n,
+                getLog(),
+                project
+        );
+
         if (skip) {
-            info("vivid.cherimoya.actions.skipping-execution-via-configuration");
+            factory.log.info("vivid.cherimoya.action.skipping-execution-via-configuration");
             return;
         }
+
+        final ClassFileScanner classFileScanner = new ClassFileScanner(factory);
+        try {
+            classFileScanner.scanAll();
+        } catch (final DependencyResolutionRequiredException e) {
+            e.printStackTrace();
+        }
+
+        // TODO Ensure project model packaging is "jar".
 
         final String g_a = String.format(
                 "%s:%s",
@@ -83,7 +97,7 @@ public class VerifyConstantsMojo
 
         final Set<String> versions = allVersions();
         if (versions.size() == 1) {
-            warn(
+            factory.log.warn(
                     "vivid.cherimoya.warning.cw-1-skipping-execution-via-singular-version",
                     versions.iterator().next(),
                     g_a
@@ -108,28 +122,6 @@ public class VerifyConstantsMojo
         // TODO Identify all available versions of this G:A, known to the running Maven system. Does this mean the available versions in the localRepository and the remoteRepository's? artifactMetadataSource.retrieveAvailableVersions(artifact, localRepository, Collections.<ArtifactRepository>emptyList());
 
         return versions;
-    }
-
-    private String getText(
-            final String i18nKey,
-            final Object... args
-    ) {
-        final Locale locale = Locale.getDefault();
-        return i18n.format(I18N_RESOURCE_BUNDLE, locale, i18nKey, args);
-    }
-
-    private void info(
-            final String i18nKey,
-            final Object... args
-    ) {
-        getLog().info(getText(i18nKey, args));
-    }
-
-    private void warn(
-            final String i18nKey,
-            final Object... args
-    ) {
-        getLog().warn(getText(i18nKey, args));
     }
 
 }
