@@ -20,9 +20,8 @@ To add a dependency on Cherimoya using Maven, use the following:
 Annotate fields with {@Constant} and then run the Maven plugin.
 Ensure that all desired versions are available in your local Maven repo.
 Ignores field visibility.
-
-The impact of using Cherimoya in your project is that a single new class, the {@Constant} annotation,
-is added to your annotated classes and the annotation is retained in class files.
+The only requirement is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
+The impact of using Cherimoya in your project is that a single new class, the {@Constant} annotation, is added to your annotated classes and the annotation is retained in class files.
 
 Skip execution by setting the ``skip'' configuration parameter to ``true''.
 

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2017 The Cherimoya Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package vivid.cherimoya.maven;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -11,17 +26,20 @@ import java.util.List;
 /**
  * @since 1.0
  */
-public class ClassFileScanner {
+class ClassFileScanner {
 
     private final Factory factory;
+    private final String artifactVersion; // TODO Instead of version, pass the Maven artifact object representing a JAR or target/classes dir, + artifact version.
 
-    public ClassFileScanner(
-            final Factory factory
+    ClassFileScanner(
+            final Factory factory,
+            final String artifactVersion
     ) {
         this.factory = factory;
+        this.artifactVersion = artifactVersion;
     }
 
-    public void scanAll() throws DependencyResolutionRequiredException {
+    void scanAll() throws DependencyResolutionRequiredException {
         for (final String entry : (List<String>) factory.project.getCompileClasspathElements()) {
             scanEntry(new File(entry));
         }
@@ -30,7 +48,7 @@ public class ClassFileScanner {
     private void scanEntry(final File entry) {
         if (entry.isDirectory()) {
             scanDirectory(entry);
-        } else if (IsJavaClassFilePredicate.SINGLETON.apply(entry)) {
+        } else if (Static.isJavaClassFile(entry)) {
             processJavaClassFile(entry);
         } else {
             factory.log.debug("vivid.cherimoya.message.ignoring-unrecognized-file", entry);
@@ -55,10 +73,17 @@ public class ClassFileScanner {
         }
     }
 
-    class FieldScanner extends ClassVisitor {
+    private class FieldScanner extends ClassVisitor {
+        private String clazzName;
 
-        public FieldScanner() {
+        FieldScanner() {
             super(Opcodes.ASM5);
+        }
+
+        @Override
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            this.clazzName = name;
+            super.visit(version, access, name, signature, superName, interfaces);
         }
 
         @Override
@@ -70,7 +95,7 @@ public class ClassFileScanner {
         class FieldAnnotationScanner extends FieldVisitor {
             private final String fieldName;
 
-            public FieldAnnotationScanner(
+            FieldAnnotationScanner(
                     final String fieldName
             ) {
                 super(Opcodes.ASM5);
@@ -80,9 +105,8 @@ public class ClassFileScanner {
             //[INFO] visitAnnotation() desc = Lvivid/cherimoya/annotation/Constant;, visible = false
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                if (IsConstantAnnotationPredicate.SINGLETON.apply(desc)) {
-                    // TODO Record the fully-qualified classname, field name, field type, and field value
-                    factory.log.info("@Constant " + fieldName);
+                if (Static.isConstantAnnotation(desc)) {
+                    factory.data.recordConstantField(artifactVersion, clazzName, fieldName);
                 }
                 return super.visitAnnotation(desc, visible);
             }
