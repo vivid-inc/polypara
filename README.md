@@ -1,12 +1,14 @@
-# Cherimoya: Automated verification that Java language constants are throughout a series of releases.
+# Cherimoya: Automated verification that Java language constants are constant throughout successive versions
 
-For when you look at a constant field and think to yourself: "The value of this field cannot change, even in successive versions."
+For when you look at a constant field in Java and think to yourself: "The value of this field cannot change, even in successive versions."
 Comprised of a Java annotation and a Maven plugin.
 Requires JDK 1.7 or higher, and Maven 3.
 
 _Cherimoya in aggregate has not reached a 1.0 release, and doesn't do what it says it does at the moment. It still needs to be vetted in real-world usage before we can finish writing the code and eventually commit ourselves to its final, blessed form of version 1.0._
 
-The JAR comprising the `@Constant` annotation is lightweight, and is labeled as version 1.0. Add a Maven dependency to it as follows:
+## Usage
+
+The JAR comprising the `@Constant` annotation is lightweight, and is labeled as version 1.0. Add a dependency to Cherimoya in your Maven POM:
 
 ```xml
 <dependency>
@@ -48,6 +50,7 @@ Include Cherimoya's verification in your Maven build by adding the following seg
 and then run a Maven build. Observe Cherimoya's output:
 
 ```
+$ mvn install
 ...
 [INFO] --- cherimoya-maven-plugin:1.0-SNAPSHOT:verify (default) @ trace ---
 [WARNING] Only one version (1.4.1) of vivid:trace is available for inter-version comparison; skipping execution
@@ -67,5 +70,6 @@ and then run a Maven build. Observe Cherimoya's output:
 - Ensure that all desired versions are available in your local Maven repo.
 - Ignores the absolute value of and changes to field visibility modifiers (public, package, protected, private).
 - The only requirement is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
-- The impact of using Cherimoya in your project is that a single new class, the {@Constant} annotation, is added to your annotated classes and the annotation is retained in class files.
-- Skip execution by setting the ``skip'' configuration parameter to ``true''.
+- The impact of using Cherimoya in your project is that a single new class, the `@Constant` annotation, is added to your annotated classes and the annotation is retained in class files.
+- Skip execution by setting the `skip` configuration parameter to `true`.
+- Publish to Maven Central
