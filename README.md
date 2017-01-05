@@ -73,3 +73,4 @@ $ mvn install
 - The impact of using Cherimoya in your project is that a single new class, the `@Constant` annotation, is added to your annotated classes and the annotation is retained in class files.
 - Skip execution by setting the `skip` configuration parameter to `true`.
 - Publish to Maven Central
+- Set up a build on Travis CI
