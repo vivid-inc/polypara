@@ -63,4 +63,11 @@ import java.lang.annotation.Target;
 @Target({
         ElementType.FIELD
 })
-public @interface Constant {}
+public @interface Constant {
+
+    /**
+     * Use this attribute field to record intention: why the field is constant, the perils of changing its value.
+     */
+    String[] rationale() default {};
+
+}
