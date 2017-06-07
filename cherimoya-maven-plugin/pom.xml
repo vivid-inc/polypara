@@ -124,11 +124,13 @@
                 <version>3.2</version>
                 <configuration>
                     <goalPrefix>cherimoya</goalPrefix>
-                    <!--<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>-->
                 </configuration>
                 <executions>
                     <execution>
-                        <id>mojo-descriptor</id>
+                        <id>default-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
