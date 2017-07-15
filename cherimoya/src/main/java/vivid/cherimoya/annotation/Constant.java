@@ -29,8 +29,6 @@ import java.lang.annotation.Target;
  * A qualifying field has the same fully qualified class name identifier and field identifier. As an example:
  *
  * <pre>
- * package summer.breeze;
- *
  * class Yacht {
  *     {@literal @}Constant
  *     static final int LENGTH_MM = 9700;
@@ -38,8 +36,8 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  *
- * <p>The {@code LENGTH} field is marked as constant, signifying that the fully-qualified field
- * {@code summer.breeze.Yacht.LENGTH} is expected to constantly have the same value integer value of {@code 2370}
+ * <p>The {@code LENGTH_MM} field is marked as constant, signifying that the fully-qualified field
+ * {@code summer.breeze.Yacht.LENGTH_MM} is expected to constantly have the same value integer value of {@code 9700}
  * contiguously in all available packaged versions from the field's first appearance throughout its last.
  * The field is also expected to be annotated as {@code @Constant} in all relevant versions.</p>
  *

@@ -36,7 +36,7 @@
     <description>Toolkit for software quality automation.</description>
     <url>https://github.com/vivid-inc/cherimoya</url>
     <scm>
-      <url>https://github.com/vivid-inc/cherimoya</url>
+        <url>https://github.com/vivid-inc/cherimoya</url>
     </scm>
     <inceptionYear>2017</inceptionYear>
     <licenses>
@@ -52,6 +52,10 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                </plugin>
+                <plugin>
                     <!-- Inherit Maven compiler plugin configuration from the parent. -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -63,6 +67,22 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.github.manouti</groupId>
+                <artifactId>jar-timestamp-normalize-maven-plugin</artifactId>
+                <version>0.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jar-normalize</id>
+                        <goals>
+                            <goal>normalize</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

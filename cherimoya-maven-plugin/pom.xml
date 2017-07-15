@@ -119,6 +119,43 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>com.github.manouti</groupId>
+                <artifactId>jar-timestamp-normalize-maven-plugin</artifactId>
+                <version>0.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jar-normalize</id>
+                        <goals>
+                            <goal>normalize</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.l10n-maven-plugin</groupId>
+                <artifactId>l10n-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>validate-i18n-resources</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <configuration>
+                            <htmlKeys>
+                                <param>.html</param>
+                            </htmlKeys>
+                            <propertyDir>${project.build.outputDirectory}</propertyDir>
+                            <urlKeys>
+                                <param>.url</param>
+                            </urlKeys>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.2</version>

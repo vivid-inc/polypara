@@ -1,14 +1,14 @@
 # Cherimoya: Automated verification that Java language constants are constant throughout successive versions
 
-For when you look at a constant field in Java and think to yourself: "The value of this field cannot change, even in successive versions."
+For when you look at a constant field in Java and think to yourself: "The value of this field *must not* change, even in successive versions."
 Comprised of a Java annotation and a Maven plugin.
 Requires JDK 1.7 or higher, and Maven 3.
 
-_Cherimoya in aggregate has not reached a 1.0 release, and doesn't do what it says it does at the moment. It still needs to be vetted in real-world usage before we can finish writing the code and eventually commit ourselves to its final, blessed form of version 1.0._
+**Note:** _Cherimoya in aggregate has not reached a 1.0 release, and doesn't do what it says it does at the moment. It still needs to be vetted in real-world usage before we can finish writing the code and eventually commit ourselves to its final, blessed form of version 1.0._
 
 ## Usage
 
-The JAR comprising the `@Constant` annotation is lightweight, and is labeled as version 1.0. Add a dependency to Cherimoya in your Maven POM:
+The distributable JAR comprising the `@Constant` annotation is lightweight, and is labeled as version 1.0. Add a dependency to Cherimoya in your Maven POM:
 
 ```xml
 <dependency>
@@ -26,7 +26,7 @@ In your Java code, go through your source code and annotate the appropriate fiel
 static final String DEFAULT_FLOW_CONTROL_MAX_WINDOW_BYTES = 10 * 1024;
 ```
 
-Include Cherimoya's verification in your Maven build by adding the following segment to your Maven `pom.xml`:
+Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`:
 
 ```xml
    <build>
@@ -69,8 +69,8 @@ $ mvn install
 
 - Ensure that all desired versions are available in your local Maven repo.
 - Ignores the absolute value of and changes to field visibility modifiers (public, package, protected, private).
-- The only requirement is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
-- The impact of using Cherimoya in your project is that a single new class, the `@Constant` annotation, is added to your annotated classes and the annotation is retained in class files.
+- The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
+- The impact that using Cherimoya has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
 - Skip execution by setting the `skip` configuration parameter to `true`.
-- Publish to Maven Central
+- Publish to Maven Central. http://www.sonatype.org/nexus/2015/01/08/deploy-to-maven-central-repository/
 - Set up a build on Travis CI
