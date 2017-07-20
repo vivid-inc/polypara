@@ -74,3 +74,4 @@ $ mvn install
 - Skip execution by setting the `skip` configuration parameter to `true`.
 - Publish to Maven Central. http://www.sonatype.org/nexus/2015/01/08/deploy-to-maven-central-repository/
 - Set up a build on Travis CI
+- Integrate with SonarQube
