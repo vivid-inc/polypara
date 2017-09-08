@@ -1,8 +1,9 @@
 # Cherimoya: Automated verification that Java language constants are constant throughout successive versions
 
-For when you look at a constant field in Java and think to yourself: "The value of this field *must not* change, even in successive versions."
-Comprised of a Java annotation and a Maven plugin.
-Requires JDK 1.7 or higher, and Maven 3.
+For when you look at a constant field in Java and think to yourself: "The value of this field *must not change*, even in successive versions."
+Appropriate for values that are exposed to and relied upon by software outside of your realm of concern or with whom you have a standing promise to keep keywords stable, such as API clients and database values.
+Comprised of a feather-weight Java annotation and a Maven plugin that breaks the build in cases of violations.
+Developed, tested, and relied upon with Java JDK versions 1.7 and 1.8, and Apache Maven 3.
 
 **Note:** _Cherimoya in aggregate has not reached a 1.0 release, and doesn't do what it says it does at the moment. It still needs to be vetted in real-world usage before we can finish writing the code and eventually commit ourselves to its final, blessed form of version 1.0._
 
@@ -40,6 +41,13 @@ Include Cherimoya's verification step in your Maven build by adding the followin
                    <goals>
                        <goal>verify</goal>
                    </goals>
+                   <configuration>
+                       <requireVersions>
+                           <requireVersion>1.0</requireVersion>
+                           <requireVersion>1.1</requireVersion>
+                           <requireVersion>1.2</requireVersion>
+                       </requireVersions>
+                   </configuration>
                </execution>
            </executions>
        </plugin>
