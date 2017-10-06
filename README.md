@@ -35,7 +35,7 @@ Include Cherimoya's verification step in your Maven build by adding the followin
        <plugin>
            <groupId>vivid.cherimoya</groupId>
            <artifactId>cherimoya-maven-plugin</artifactId>
-           <version>1.0-SNAPSHOT</version>
+           <version>1.0</version>
            <executions>
                <execution>
                    <goals>
@@ -60,7 +60,7 @@ and then run a Maven build. Observe Cherimoya's output:
 ```
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:1.0-SNAPSHOT:verify (default) @ trace ---
+[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ trace ---
 [WARNING] Only one version (1.4.1) of vivid:trace is available for inter-version comparison; skipping execution
 ...
 ```

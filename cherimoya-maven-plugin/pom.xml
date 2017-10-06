@@ -21,7 +21,7 @@
     <parent>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>vivid-cherimoya</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <!-- TODO set version to 0.1 -->
 
