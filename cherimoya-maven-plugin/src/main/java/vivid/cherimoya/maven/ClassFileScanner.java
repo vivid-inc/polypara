@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 The Cherimoya Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+
+// TODO Try https://github.com/ronmamo/reflections as demonstrated in swagger-maven-plugin/src/main/java/io/openapitools/swagger/JaxRSScanner.java
 
 /**
  * @since 1.0
