@@ -29,6 +29,8 @@ class Static {
 
     private static final String JAVA_CLASS_FILE_EXTENSION = "class";
 
+    static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
+
     private Static() {
         // Cannot be instantiated.
     }

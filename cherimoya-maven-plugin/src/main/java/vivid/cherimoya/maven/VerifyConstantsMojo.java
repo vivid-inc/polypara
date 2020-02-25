@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 The Cherimoya Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,20 @@ import org.codehaus.plexus.i18n.I18N;
 
 import java.util.*;
 
+/*
+TODO Design:
+
+The set of versions targeted for scanning are the current project UNION the versions listed in the plugin configuration.
+
+Sweeping across the subject versions, scan all .class files. Build a DB of all fields annotated with @Constant, recording the (GAV, field reference, field value).
+
+Analyze the progression of @Constant values thru the versions. Clarify the ordering, and document it. Emit build-breaking ERRORs on discontinuities.
+
+https://stackoverflow.com/questions/11341783/accessing-classes-in-custom-maven-reporting-plugin
+TODO Identify all available versions of this G:A, known to the running Maven system. Does this mean the available versions in the localRepository and the remoteRepository's? artifactMetadataSource.retrieveAvailableVersions(artifact, localRepository, Collections.<ArtifactRepository>emptyList());
+
+ */
+
 /**
  * @since 1.0
  */
@@ -45,7 +59,7 @@ public class VerifyConstantsMojo
     /**
      * The Maven Project Object
      */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     /**
@@ -55,14 +69,14 @@ public class VerifyConstantsMojo
      * @since 1.0
      */
     @Parameter
-    private String[] requireVersions; // TODO
+    private String[] requireVersions;
 
     /**
      * Flag to easily skip execution.
      *
      * @since 1.0
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(property = Static.POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY, defaultValue = "false")
     private boolean skip;
 
     @Parameter
@@ -107,15 +121,7 @@ public class VerifyConstantsMojo
                     versions.iterator().next(),
                     ga
             );
-            return;
         }
-
-        // TODO scan for annotated items in all classes in current project (the generated classes) + all versions available in the repo.
-        // TODO process each annotated item: (full qualified class and field name, value as java primitive type)
-        // TODO Scan classes in each version's JARs.
-        // https://stackoverflow.com/questions/11341783/accessing-classes-in-custom-maven-reporting-plugin
-        // TODO Identify all available versions of this G:A, known to the running Maven system. Does this mean the available versions in the localRepository and the remoteRepository's? artifactMetadataSource.retrieveAvailableVersions(artifact, localRepository, Collections.<ArtifactRepository>emptyList());
-        // TODO Compute and report.
     }
 
 }
