@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- This project consists of the versions 1.0 and 2.0 -->
+
+    <groupId>vivid.cherimoya.test</groupId>
+    <artifactId>simple-project</artifactId>
+    <version>2.0</version>
+    <packaging>jar</packaging>
+    <name>Vivid Cherimoya test: Simple project</name>
+    <description>
+        A simple integration test verifying the basic use case of Cherimoya's @Constant field annotation.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>vivid.cherimoya</groupId>
+            <artifactId>cherimoya</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>vivid.cherimoya</groupId>
+                <artifactId>cherimoya-maven-plugin</artifactId>
+<!--                <goals>-->
+<!--                    <goal>verify</goal>-->
+<!--                </goals>-->
+                <configuration>
+                    <requireVersions>
+                        <requireVersion>1.0</requireVersion>
+                        <!-- The current version (2.0) is included automatically -->
+                    </requireVersions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

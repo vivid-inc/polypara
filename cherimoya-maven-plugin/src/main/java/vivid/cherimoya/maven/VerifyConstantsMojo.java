@@ -60,7 +60,7 @@ public class VerifyConstantsMojo
      * @since 1.0
      */
     @Parameter
-    private List<String> requireVersions;
+    private List<String> requireVersions; // TODO Rename to "versions"
 
     /**
      * Flag to easily skip execution.
@@ -94,6 +94,8 @@ public class VerifyConstantsMojo
             );
             return;
         }
+
+        // TODO filter out the current version from requireVersions
 
         try {
             // The set of JARs targeted for scanning are:

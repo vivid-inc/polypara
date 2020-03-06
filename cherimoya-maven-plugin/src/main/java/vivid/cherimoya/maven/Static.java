@@ -27,10 +27,10 @@ import java.net.URLClassLoader;
 /**
  * @since 1.0
  */
-class Static {
+public class Static {
 
     @Constant
-    static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
+    public static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
 
     @Constant
     static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
