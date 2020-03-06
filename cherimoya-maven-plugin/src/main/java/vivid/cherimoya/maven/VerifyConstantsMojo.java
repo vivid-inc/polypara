@@ -25,7 +25,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
-import org.reflections.util.ClasspathHelper;
+import vivid.cherimoya.annotation.Constant;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Set;
 
 /*
 https://stackoverflow.com/questions/11341783/accessing-classes-in-custom-maven-reporting-plugin
@@ -85,21 +92,31 @@ public class VerifyConstantsMojo
             return;
         }
 
-        // The set of JARs targeted for scanning are:
-        //     The current project  UNION  Versions listed in the plugin configuration
-        System.out.println("** url = " + ClasspathHelper.forClassLoader());
+        try {
+            // The set of JARs targeted for scanning are:
+            //     The current project  UNION  Versions listed in the plugin configuration
+            final URLClassLoader classLoader = URLClassLoader.newInstance(
+                    new URL[]{new File(project.getBuild().getOutputDirectory()).toURI().toURL()}
+            );
 
-        // Sweeping across the subject versions, scan all .class files.
-        // Build a DB of all fields annotated with @Constant, recording the (GAV, field reference, field value).
-        ReflectiveScanner.scan(
-//                Stream.of("").toSet()
-        );
+            // Sweeping across the subject versions, scan all .class files.
+            // Build a DB of all fields annotated with @Constant, recording the (GAV, field reference, field value).
+            final Set<Field> annotatedFields = ReflectiveScanner.scan(
+                    Constant.class,
+                    classLoader
+            );
+
+            System.out.println("** FIELDS");
+            for (final Field f : annotatedFields) {
+                System.out.println(f);
+            }
+        } catch (MalformedURLException e) {
+            executionContext.log.error("vivid.cherimoya.error.ce-1-internal-error"); // TODO
+        }
 
         // Analyze the progression of @Constant values thru the versions.
         // Emit build-breaking ERRORs on discontinuities.
         // Clarify the ordering, and document it.
-
-
 
 
 
@@ -128,3 +145,5 @@ public class VerifyConstantsMojo
     }
 
 }
+
+// (rm -rf target ; mvn install && cd target/it/simple-it/ && mvn vivid.cherimoya:cherimoya-maven-plugin:1.0:verify)

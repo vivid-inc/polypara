@@ -1,37 +1,34 @@
 package vivid.cherimoya.maven;
 
-import io.vavr.collection.Set;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import vivid.cherimoya.annotation.Constant;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Optional;
+import java.net.URLClassLoader;
+import java.util.Set;
 
 public class ReflectiveScanner {
 
-    public static void scan(
-//            final Collection<URL> resourcePaths
+    public static Set<Field> scan(
+            final Class<? extends Annotation> annotation,
+            final URLClassLoader cl
     ) {
         final Reflections reflections = new Reflections(
                 new ConfigurationBuilder()
-                        .addScanners(
-                                new FieldAnnotationsScanner()
+                        .setUrls(ClasspathHelper.forClassLoader(cl))
+                        .addClassLoader(cl)
+                        .setScanners(
+                                new FieldAnnotationsScanner(),
+                                new SubTypesScanner(false)
                         )
-                        .addUrls(ClasspathHelper.forClassLoader())
                         .useParallelExecutor()
         );
 
-
-        System.out.println("** FIELDS");
-        java.util.Set<Field> x = reflections.getFieldsAnnotatedWith(Constant.class);
-        for (final Field f : x) {
-            System.out.println(f);
-        }
+        return reflections.getFieldsAnnotatedWith(annotation);
     }
 
 }
