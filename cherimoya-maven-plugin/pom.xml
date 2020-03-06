@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 
     Copyright 2017 The Cherimoya Authors
@@ -16,21 +17,39 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>vivid-cherimoya</artifactId>
         <version>1.0</version>
     </parent>
-    <!-- TODO set version to 0.1 -->
 
     <artifactId>cherimoya-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
     <name>Cherimoya Maven Plugin</name>
+    <description>Toolkit for software quality automation.</description>
+    <url>https://github.com/vivid-inc/cherimoya</url>
+    <scm>
+        <url>https://github.com/vivid-inc/cherimoya</url>
+    </scm>
+    <inceptionYear>2017</inceptionYear>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>Copyright (c) 2017 Vivid Inc.</comments>
+        </license>
+    </licenses>
 
     <dependencies>
+        <!-- TODO Replace google guava with vavr -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -62,6 +81,7 @@
             <artifactId>plexus-i18n</artifactId>
             <version>1.0-beta-10</version>
         </dependency>
+        <!-- TODO Remove neo4j deps -->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-kernel</artifactId>
@@ -79,6 +99,7 @@
             <version>2.3.8</version>
             <type>test-jar</type>
         </dependency>
+        <!-- TODO Replace asm with org.reflections -->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -99,39 +120,8 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <!-- Inherit Maven compiler plugin configuration from the parent. -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <!-- Inherit Maven JAR plugin configuration from the parent. -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>com.github.manouti</groupId>
-                <artifactId>jar-timestamp-normalize-maven-plugin</artifactId>
-                <version>0.1.0</version>
-                <executions>
-                    <execution>
-                        <id>jar-normalize</id>
-                        <goals>
-                            <goal>normalize</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>com.googlecode.l10n-maven-plugin</groupId>
                 <artifactId>l10n-maven-plugin</artifactId>
@@ -155,6 +145,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
@@ -172,6 +163,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
@@ -201,6 +193,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

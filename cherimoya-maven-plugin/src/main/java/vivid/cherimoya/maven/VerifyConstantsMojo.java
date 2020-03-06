@@ -62,6 +62,7 @@ public class VerifyConstantsMojo
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
+    // TODO Investigate refactoring requireVersions to 1..* of versionSet name=""
     /**
      * Expect these artifact versions to be available Process artifacts of these versions.
      * An error will be generated if a given artifact version is not available in the local repository.
@@ -117,7 +118,7 @@ public class VerifyConstantsMojo
         final Set<String> versions = factory.data.getAllVersions();
         if (versions.size() == 1) {
             factory.log.warn(
-                    "vivid.cherimoya.warning.cw-1-skipping-execution-via-singular-version",
+                    "vivid.cherimoya.warning.cw-1-skipping-execution-due-to-singular-version",
                     versions.iterator().next(),
                     ga
             );

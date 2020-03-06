@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 
     Copyright 2017 The Cherimoya Authors
@@ -16,7 +17,10 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -24,14 +28,10 @@
         <artifactId>vivid-cherimoya</artifactId>
         <version>1.0</version>
     </parent>
+
     <artifactId>cherimoya</artifactId>
-    <version>1.0</version>
     <packaging>jar</packaging>
 
-    <organization>
-        <name>Vivid Inc.</name>
-        <url>https://vivid-inc.net</url>
-    </organization>
     <name>Vivid Cherimoya</name>
     <description>Toolkit for software quality automation.</description>
     <url>https://github.com/vivid-inc/cherimoya</url>
@@ -47,42 +47,5 @@
             <comments>Copyright (c) 2017 Vivid Inc.</comments>
         </license>
     </licenses>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <!-- Inherit Maven compiler plugin configuration from the parent. -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <!-- Inherit Maven JAR plugin configuration from the parent. -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>com.github.manouti</groupId>
-                <artifactId>jar-timestamp-normalize-maven-plugin</artifactId>
-                <version>0.1.0</version>
-                <executions>
-                    <execution>
-                        <id>jar-normalize</id>
-                        <goals>
-                            <goal>normalize</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
