@@ -60,8 +60,7 @@ and then run a Maven build. Observe Cherimoya's output:
 ```
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ trace ---
-[WARNING] Only one version (1.4.1) of vivid:trace is available for inter-version comparison; skipping execution
+[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ my-project ---
 ...
 ```
 

@@ -17,19 +17,39 @@
 package vivid.cherimoya.maven;
 
 import org.apache.maven.project.MavenProject;
+import vivid.cherimoya.annotation.Constant;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * @since 1.0
  */
 class Static {
 
+    @Constant
+    static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
+
+    @Constant
     static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
 
     private Static() {
         // Cannot be instantiated.
     }
 
-    private static String mavenGAOf(
+    static URLClassLoader classLoaderForDirectory(
+            final String dir
+    ) throws MalformedURLException {
+        return URLClassLoader.newInstance(
+                new URL[] {
+                        new File(dir).toURI().toURL()
+                }
+        );
+    }
+
+    static String mavenGAOf(
             final MavenProject mavenProject
     ) {
         return String.format(

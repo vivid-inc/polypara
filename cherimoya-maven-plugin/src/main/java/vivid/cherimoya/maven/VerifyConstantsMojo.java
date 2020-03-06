@@ -16,6 +16,7 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.Stream;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -27,22 +28,16 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
 import vivid.cherimoya.annotation.Constant;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.List;
 import java.util.Set;
-
-/*
-https://stackoverflow.com/questions/11341783/accessing-classes-in-custom-maven-reporting-plugin
- */
 
 /**
  * @since 1.0
  */
 @Mojo(
-        name = "verify",
+        name = Static.POM_CHERIMOYA_VERIFY_MOJO_NAME,
         defaultPhase = LifecyclePhase.PROCESS_CLASSES
 )
 public class VerifyConstantsMojo
@@ -65,7 +60,7 @@ public class VerifyConstantsMojo
      * @since 1.0
      */
     @Parameter
-    private String[] requireVersions;
+    private List<String> requireVersions;
 
     /**
      * Flag to easily skip execution.
@@ -91,25 +86,34 @@ public class VerifyConstantsMojo
             executionContext.log.info("vivid.cherimoya.action.skipping-execution-via-configuration");
             return;
         }
+        if (requireVersions == null || requireVersions.isEmpty()) {
+            executionContext.log.warn(
+                    "vivid.cherimoya.warning.cw-1-skipping-execution-due-to-singular-version",
+                    project.getVersion(),
+                    Static.mavenGAOf(project)
+            );
+            return;
+        }
 
         try {
             // The set of JARs targeted for scanning are:
             //     The current project  UNION  Versions listed in the plugin configuration
-            final URLClassLoader classLoader = URLClassLoader.newInstance(
-                    new URL[]{new File(project.getBuild().getOutputDirectory()).toURI().toURL()}
-            );
+            final Stream<Set<Field>> annotatedFields =
+                    Stream.of(
+                            Static.classLoaderForDirectory(project.getBuild().getOutputDirectory())
+                    )
+                            .map(cl -> ReflectiveScanner.scan(Constant.class, cl))
+                    ;
 
             // Sweeping across the subject versions, scan all .class files.
-            // Build a DB of all fields annotated with @Constant, recording the (GAV, field reference, field value).
-            final Set<Field> annotatedFields = ReflectiveScanner.scan(
-                    Constant.class,
-                    classLoader
-            );
+            // Build DB of all fields annotated with @Constant, recording (GAV, field reference, field value).
 
             System.out.println("** FIELDS");
-            for (final Field f : annotatedFields) {
-                System.out.println(f);
-            }
+            annotatedFields.forEach(
+                    s -> s.forEach(
+                            System.out::println
+                    )
+            );
         } catch (MalformedURLException e) {
             executionContext.log.error("vivid.cherimoya.error.ce-1-internal-error"); // TODO
         }
@@ -121,26 +125,11 @@ public class VerifyConstantsMojo
 
 
         /*
-
-        final ClassFileScanner classFileScanner = new ClassFileScanner(
-                executionContext,
-                project.getModel().getVersion()
-        );
-
-        if (versions.size() == 1) {
-            executionContext.log.warn(
-                    "vivid.cherimoya.warning.cw-1-skipping-execution-due-to-singular-version",
-                    versions.iterator().next(),
-                    mavenGAOf(project)
-            );
-        }
-
         artifactMetadataSource.retrieveAvailableVersions(
                 artifact,
                 localRepository,
                 Collections.<ArtifactRepository>emptyList()
         );
-
         */
     }
 
