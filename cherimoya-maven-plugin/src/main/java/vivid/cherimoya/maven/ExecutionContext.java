@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 The Cherimoya Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package vivid.cherimoya.maven;
 
 import org.apache.maven.plugin.logging.Log;
@@ -22,18 +23,18 @@ import org.codehaus.plexus.i18n.I18N;
 /**
  * @since 1.0
  */
-class Factory {
+class ExecutionContext {
 
-    final Data data;
+//    final Data data;
     final I18nLogging log;
     final MavenProject project;
 
-    Factory(
+    ExecutionContext(
             final I18N i18n,
             final Log rawLogger,
             final MavenProject project
     ) {
-        this.data = new Data();
+//        this.data = new Data();
         this.log = new I18nLogging(i18n, rawLogger);
         this.project = project;
     }
