@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- This project consists of the versions 1.0 and 2.0 -->
+    <!-- This project consists of the versions 1 and 2 -->
 
     <groupId>vivid.cherimoya.test</groupId>
     <artifactId>simple-project</artifactId>
-    <version>2.0</version>
+    <version>2</version>
     <packaging>jar</packaging>
+
     <name>Vivid Cherimoya test: Simple project</name>
     <description>
         A simple integration test verifying the basic use case of Cherimoya's @Constant field annotation.
@@ -31,20 +32,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-            </plugin>
-            <plugin>
                 <groupId>vivid.cherimoya</groupId>
                 <artifactId>cherimoya-maven-plugin</artifactId>
-<!--                <goals>-->
-<!--                    <goal>verify</goal>-->
-<!--                </goals>-->
                 <configuration>
                     <requireVersions>
-                        <requireVersion>1.0</requireVersion>
-                        <!-- The current version (2.0) is included automatically -->
+                        <requireVersion>1</requireVersion>
+                        <!-- The current version (2) is included automatically -->
                     </requireVersions>
                 </configuration>
             </plugin>

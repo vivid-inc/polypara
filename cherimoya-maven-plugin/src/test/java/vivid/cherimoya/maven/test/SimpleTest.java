@@ -8,27 +8,48 @@ import vivid.cherimoya.maven.VerifyConstantsMojo;
 
 import java.io.File;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class SimpleTest {
 
+    // https://stackoverflow.com/questions/45241317/hard-time-mojo-testing-with-maven-plugin-testing-harness
+
+    private static final String SIMPLE_PROJECT_DIR = "target/test-classes/simple-project";
+
     @Rule
-    public MojoRule rule = new MojoRule() {};
+    public MojoRule mojoRule = new MojoRule();
 
     @Test
     public void testSimple() throws Exception {
-        final File pom = new File("target/test-classes/simple-project");
-        assertNotNull(pom);
-        assertTrue(pom.exists());
+        final File pomDir = new File(SIMPLE_PROJECT_DIR);
+        assertNotNull(pomDir);
+        assertTrue(pomDir.exists());
 
-        final VerifyConstantsMojo mojo =
-                (VerifyConstantsMojo) rule.lookupConfiguredMojo(
-                        pom,
+        runMavenInSubProcess(pomDir, "mvn", "compile");
+
+        final VerifyConstantsMojo verifyConstantsMojo =
+                (VerifyConstantsMojo) mojoRule.lookupConfiguredMojo(
+                        pomDir,
                         Static.POM_CHERIMOYA_VERIFY_MOJO_NAME
                 );
-        assertNotNull(mojo);
-        mojo.execute();
+        assertNotNull(verifyConstantsMojo);
+        verifyConstantsMojo.execute();
+    }
+
+    private static void runMavenInSubProcess(
+            final File directory,
+            final String... command
+    ) throws Exception {
+        final Process process = new ProcessBuilder()
+                .directory(directory)
+                .command(command)
+                .inheritIO()
+                .start();
+        int exitCode = process.waitFor();
+        assertThat(exitCode, is(0));
     }
 
 }

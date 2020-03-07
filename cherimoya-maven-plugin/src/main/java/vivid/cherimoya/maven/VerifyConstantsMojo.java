@@ -95,7 +95,16 @@ public class VerifyConstantsMojo
             return;
         }
 
-        // TODO filter out the current version from requireVersions
+        // TODO Silently filter out the current version from requireVersions
+
+        executionContext.log.info(
+                "vivid.cherimoya.action.verifying-constants",
+                Static.mavenGAOf(project),
+                Stream.ofAll(requireVersions)
+                        .append(project.getVersion())
+                        .intersperse(" ")
+                        .fold("", String::concat)
+        );
 
         try {
             // The set of JARs targeted for scanning are:
