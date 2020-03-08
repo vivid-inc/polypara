@@ -1,5 +1,9 @@
 package vivid.cherimoya.maven.test;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,6 +54,16 @@ public class SimpleTest {
                 .start();
         int exitCode = process.waitFor();
         assertThat(exitCode, is(0));
+    }
+
+    private static ArtifactRepository createLocalArtifactRepository() {
+        return new MavenArtifactRepository("local",
+                new File("/tmp/repo").toURI().toString(),
+                new DefaultRepositoryLayout(),
+                new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS, ArtifactRepositoryPolicy.CHECKSUM_POLICY_IGNORE ),
+                new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS, ArtifactRepositoryPolicy.CHECKSUM_POLICY_IGNORE )
+
+        );
     }
 
 }

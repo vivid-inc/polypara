@@ -27,7 +27,10 @@ import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.Set;
 
-public class ReflectiveScanner {
+/**
+ * @since 1.0
+ */
+class ReflectiveScanner {
 
     public static Set<Field> scan(
             final Class<? extends Annotation> annotation,

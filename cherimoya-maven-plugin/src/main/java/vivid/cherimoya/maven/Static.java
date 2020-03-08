@@ -16,6 +16,9 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.Set;
+import io.vavr.collection.SortedSet;
+import io.vavr.collection.Stream;
 import org.apache.maven.project.MavenProject;
 import vivid.cherimoya.annotation.Constant;
 
@@ -30,10 +33,13 @@ import java.net.URLClassLoader;
 public class Static {
 
     @Constant
-    public static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
+    static final String MAVEN_VERSION_RANGE_ENTIRE_RANGE = "(,)";
 
     @Constant
     static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
+
+    @Constant
+    public static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
 
     private Static() {
         // Cannot be instantiated.
@@ -47,6 +53,23 @@ public class Static {
                         new File(dir).toURI().toURL()
                 }
         );
+    }
+
+    /**
+     * Does set {@code a} contain all elements of set {@code b}?
+     */
+    static <T> boolean containsAll(
+            final Set<T> a, final Set<T> b
+    ) {
+        return b.diff(a).isEmpty();
+    }
+
+    static String listOfVersions(
+            final SortedSet<String> versions
+    ) {
+        return Stream.ofAll(versions)
+                .intersperse("  ")
+                .fold("", String::concat);
     }
 
     static String mavenGAOf(

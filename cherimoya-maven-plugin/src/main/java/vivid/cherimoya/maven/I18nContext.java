@@ -16,27 +16,31 @@
 
 package vivid.cherimoya.maven;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
+
+import java.util.Locale;
 
 /**
  * @since 1.0
  */
-class ExecutionContext {
+class I18nContext {
 
-//    final Data data;
-    final I18nLogging log;
-    final MavenProject project;
+    private static final String I18N_RESOURCE_BUNDLE = "cherimoya-i18n";
 
-    ExecutionContext(
-            final I18N i18n,
-            final Log rawLogger,
-            final MavenProject project
+    private final I18N i18n;
+
+    I18nContext(
+            final I18N i18n
     ) {
-//        this.data = new Data();
-        this.log = new I18nLogging(i18n, rawLogger);
-        this.project = project;
+        this.i18n = i18n;
+    }
+
+    String getText(
+            final String i18nKey,
+            final Object... args
+    ) {
+        final Locale locale = Locale.getDefault();
+        return i18n.format(I18N_RESOURCE_BUNDLE, locale, i18nKey, args);
     }
 
 }
