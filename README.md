@@ -28,6 +28,7 @@ static final String DEFAULT_FLOW_CONTROL_MAX_WINDOW_BYTES = 10 * 1024;
 ```
 
 Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`:
+The following example specifies 3 versions: `1.0`, `1.1`, and `1.2`. The current project's version is merged into this list.
 
 ```xml
    <build>
@@ -42,11 +43,11 @@ Include Cherimoya's verification step in your Maven build by adding the followin
                        <goal>verify</goal>
                    </goals>
                    <configuration>
-                       <requireVersions>
-                           <requireVersion>1.0</requireVersion>
-                           <requireVersion>1.1</requireVersion>
-                           <requireVersion>1.2</requireVersion>
-                       </requireVersions>
+                       <versions>
+                           <version>1.0</version>
+                           <version>1.1</version>
+                           <version>1.2</version>
+                       </versions>
                    </configuration>
                </execution>
            </executions>
@@ -57,7 +58,7 @@ Include Cherimoya's verification step in your Maven build by adding the followin
 
 and then run a Maven build. Observe Cherimoya's output:
 
-```
+```bash
 $ mvn install
 ...
 [INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ my-project ---
@@ -90,3 +91,5 @@ __Skip execution__ by setting the `cherimoya.constant.skip` property to `true` w
 - Publish to somewhere (Maven Central won't accept our GAV because we don't control the "vivid" TLD)
 - Set up a build on Travis CI
 - Integrate with SonarQube
+- Indicate which Maven repositories it can be downloaded from.
+- Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.

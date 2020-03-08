@@ -3,10 +3,17 @@ Design Principles
 
 Code
 ----
-Let the codebase be riddled with direct use of `MojoExecutionException`. It cuts down on nested exceptions.
+- Let the codebase be saturated with direct use of `MojoExecutionException`. It cuts down on nested exceptions.
+
+Workflow
+----
+- Keep users focused on their overarching task. For example, by reducing cognitive load.
+- Support the user's overarching task 
+- Give enough information to diagnose and remediate problems.
 
 I18n
 ----
 - Localized strings are brief and concise, balanced with natural readability.
 - Messages consisting of a single sentence don't end with periods.
-- Messages are sourced from a I18n dictionary of templated strings, which are in effect patterns. Users will accustomize to these patterns with usage. The human eye can more easily focus on the beginning and end of a tract of text, rather than its middle. For these reasons, template parameters should come at or near the end of the message so that the users can ascertain the relevant information with less effort and distraction from the overarching task.
+- Messages are sourced from a I18n dictionary of templated strings, which are in effect patterns. With usage, users will become accustomed to these patterns. The human eye can more easily direct focus onto the start and finish of a tract of text rather than its midparts. Leveraging these concerns, template parameters should come at or near either end of the message text so that readers can more quickly identify the message pattern then direct their attention to ascertain relevant information burried within the message without increasing cognitive load and distracting them from their overarching taskflow.
+

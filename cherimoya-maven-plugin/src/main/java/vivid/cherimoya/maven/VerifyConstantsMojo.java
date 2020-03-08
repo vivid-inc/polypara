@@ -81,8 +81,8 @@ public class VerifyConstantsMojo
      *
      * @since 1.0
      */
-    @Parameter
-    private List<String> requireVersions; // TODO Rename to "versions"
+    @Parameter(alias = "versions")
+    private List<String> specifiedVersions;
 
     /**
      * Flag to easily skip execution.
@@ -92,11 +92,7 @@ public class VerifyConstantsMojo
     @Parameter(property = Static.POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY, defaultValue = "false")
     private boolean skip;
 
-    @Parameter
-    private boolean verbose; // TODO
-
-    public VerifyConstantsMojo() {
-    }
+    public VerifyConstantsMojo() {}
 
     public void execute()
             throws MojoExecutionException
@@ -110,9 +106,8 @@ public class VerifyConstantsMojo
             return;
         }
 
-        // TODO Clarify the notions of: current version, remotely-resolvable versions, all versions under consideration.
-
-        final TreeSet<String> allVersionsAsStrings = TreeSet.ofAll(requireVersions).add(project.getVersion());
+        // Clarify the notions of: current version, remotely-resolvable versions, all versions under consideration.
+        final TreeSet<String> allVersionsAsStrings = TreeSet.ofAll(specifiedVersions).add(project.getVersion());
 
         if (allVersionsAsStrings.size() == 1) {
             getLog().warn(i18NContext.getText(
@@ -227,4 +222,6 @@ public class VerifyConstantsMojo
 // tests:
 // no pom declarations of version -> skip
 // 1 pom declarations of version, which = current version -> skip
-// 1 pom declaration of version,
+// 1 pom declaration of version, different from current pom version -> process
+// 1 pom decl, unresolvable -> error
+// 2 pom decls, 1 unresolvable -> error

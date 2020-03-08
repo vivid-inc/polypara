@@ -35,10 +35,10 @@
                 <groupId>vivid.cherimoya</groupId>
                 <artifactId>cherimoya-maven-plugin</artifactId>
                 <configuration>
-                    <requireVersions>
-                        <requireVersion>1</requireVersion>
+                    <versions>
+                        <version>1</version>
                         <!-- The current version (2) is included automatically -->
-                    </requireVersions>
+                    </versions>
                 </configuration>
             </plugin>
         </plugins>
