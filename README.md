@@ -1,11 +1,19 @@
-# Cherimoya: Automated verification of continuity of Java language constants across release versions
+# Vivid Cherimoya
+
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
+[![Current version](https://img.shields.io/badge/JCenter-v1.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
+
+Automated verification of Java field value constancy across release versions.
+
 
 For when you look at a constant field in Java and think to yourself: "The value of this field *must not change*, even in successive versions."
 Appropriate for values that are exposed to and relied upon by software outside of your realm of concern or with whom you have a standing promise to keep keywords stable, such as API clients and database values.
-Comprised of a feather-weight Java annotation and a Maven plugin that breaks the build in cases of violations.
-Developed, tested, and relied upon with Java JDK versions 1.7 and 1.8, and Apache Maven 3.
 
-**Note:** _Cherimoya in aggregate has not reached a 1.0 release, and doesn't do what it says it does at the moment. It still needs to be vetted in real-world usage before we can finish writing the code and eventually commit ourselves to its final, blessed form of version 1.0._
+Cherimoya is comprised of a feather-weight Java annotation and a Maven plugin that breaks the build in cases of violations.
+Developed, tested, and relied upon with Java JDK version 1.8 and Apache Maven 3.3.
+
+**Note:** _Cherimoya in aggregate has not reached a 1.0 release. It still needs to be vetted in wide-spread usage before we can commit ourselves to its final, blessed form of version 1.0._
+
 
 ## Usage
 
@@ -28,32 +36,36 @@ static final String DEFAULT_FLOW_CONTROL_MAX_WINDOW_BYTES = 10 * 1024;
 ```
 
 Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`:
-The following example specifies 3 versions: `1.0`, `1.1`, and `1.2`. The current project's version is merged into this list.
+The following example specifies 3 versions: `1.0`, `1.1`, and `1.2`, in that order. The current project's version is appended to the end.
+The order of appearance is important, at least for the production of sensible error messages.
+
+Adding the project's current version (from its GAV) into the listing is optional.
+Adding the current version can be used to set the location of the version within the sequence of versions.
 
 ```xml
-   <build>
-       ...
-       <plugin>
-           <groupId>vivid.cherimoya</groupId>
-           <artifactId>cherimoya-maven-plugin</artifactId>
-           <version>1.0</version>
-           <executions>
-               <execution>
-                   <goals>
-                       <goal>verify</goal>
-                   </goals>
-                   <configuration>
-                       <versions>
-                           <version>1.0</version>
-                           <version>1.1</version>
-                           <version>1.2</version>
-                       </versions>
-                   </configuration>
-               </execution>
-           </executions>
-       </plugin>
-       ...
-   </build>
+<build>
+   ...
+   <plugin>
+       <groupId>vivid.cherimoya</groupId>
+       <artifactId>cherimoya-maven-plugin</artifactId>
+       <version>1.0</version>
+       <executions>
+           <execution>
+               <goals>
+                   <goal>verify</goal>
+               </goals>
+               <configuration>
+                   <versions>
+                       <version>1.0</version>
+                       <version>1.1</version>
+                       <version>1.2</version>
+                   </versions>
+               </configuration>
+           </execution>
+       </executions>
+   </plugin>
+   ...
+</build>
 ```
 
 and then run a Maven build. Observe Cherimoya's output:
@@ -68,16 +80,24 @@ $ mvn install
 
 __Skip execution__ by setting the `cherimoya.constant.skip` property to `true` within plugin's `configuration`:
 ```xml
-...
 <configuration>
     <cherimoya.constant.skip>true</cherimoya.constant.skip>
 </configuration>
 ```
 
 
+## Hacking
+
+Run Maven to run the tests and build the deliverables:
+```bash
+mvn clean package
+```
+
+
 ## Links
 
 - [Motivating question on StackOverflow](https://stackoverflow.com/questions/41393794/good-practices-for-breaking-maven-build-when-specific-class-members-change-val)
+
 
 ## TODO
 
@@ -91,5 +111,12 @@ __Skip execution__ by setting the `cherimoya.constant.skip` property to `true` w
 - Publish to somewhere (Maven Central won't accept our GAV because we don't control the "vivid" TLD)
 - Set up a build on Travis CI
 - Integrate with SonarQube
-- Indicate which Maven repositories it can be downloaded from.
+- Ensure that the JCenter Maven repository is included in your Maven configuration.
 - Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
+- If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
+
+
+## License
+
+© Copyright Vivid Inc.
+[Apache 2](LICENSE.txt) licensed.

@@ -16,62 +16,36 @@
 
 package vivid.cherimoya.maven;
 
-import io.vavr.collection.Set;
-import io.vavr.collection.SortedSet;
+import io.vavr.collection.List;
 import io.vavr.collection.Stream;
 import org.apache.maven.project.MavenProject;
 import vivid.cherimoya.annotation.Constant;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+class Static {
 
-/**
- * @since 1.0
- */
-public class Static {
-
-    @Constant
-    static final String MAVEN_VERSION_RANGE_ENTIRE_RANGE = "(,)";
-
-    @Constant
     static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
 
     @Constant
-    public static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
+    static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
 
     private Static() {
         // Cannot be instantiated.
     }
 
-    static URLClassLoader classLoaderForDirectory(
-            final String dir
-    ) throws MalformedURLException {
-        return URLClassLoader.newInstance(
-                new URL[] {
-                        new File(dir).toURI().toURL()
-                }
-        );
-    }
-
     /**
-     * Does set {@code a} contain all elements of set {@code b}?
+     * @return human-readable string representation of a set of version strings
      */
-    static <T> boolean containsAll(
-            final Set<T> a, final Set<T> b
-    ) {
-        return b.diff(a).isEmpty();
-    }
-
     static String listOfVersions(
-            final SortedSet<String> versions
+            final List<String> versions
     ) {
         return Stream.ofAll(versions)
                 .intersperse("  ")
                 .fold("", String::concat);
     }
 
+    /**
+     * @return string representation of the group and artifact parts of a Maven GAV
+     */
     static String mavenGAOf(
             final MavenProject mavenProject
     ) {
@@ -79,6 +53,22 @@ public class Static {
                 "%s:%s",
                 mavenProject.getModel().getGroupId(),
                 mavenProject.getModel().getArtifactId()
+        );
+    }
+
+    /**
+     * @return string representation of the group and artifact parts of a Maven GAV
+     */
+    static String mavenGAVOf(
+            final String groupId,
+            final String artifactId,
+            final String version
+    ) {
+        return String.format(
+                "%s:%s:%s",
+                groupId,
+                artifactId,
+                version
         );
     }
 

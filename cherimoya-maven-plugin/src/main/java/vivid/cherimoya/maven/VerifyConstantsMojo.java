@@ -16,27 +16,20 @@
 
 package vivid.cherimoya.maven;
 
-import io.vavr.collection.Set;
-import io.vavr.collection.TreeSet;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
+import io.vavr.Tuple2;
+import io.vavr.collection.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
-
-import java.util.List;
-
-import static vivid.cherimoya.maven.Static.MAVEN_VERSION_RANGE_ENTIRE_RANGE;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
+import vivid.cherimoya.annotation.Constant;
 
 /**
  * @since 1.0
@@ -45,35 +38,34 @@ import static vivid.cherimoya.maven.Static.MAVEN_VERSION_RANGE_ENTIRE_RANGE;
         name = Static.POM_CHERIMOYA_VERIFY_MOJO_NAME,
         defaultPhase = LifecyclePhase.PROCESS_CLASSES
 )
-public class VerifyConstantsMojo
-        extends AbstractMojo
-{
+public class VerifyConstantsMojo extends AbstractMojo {
 
     @Component
     private I18N i18n;
 
+    /**
+     * The entry point to Maven Artifact Resolver, i.e. the component doing all the work.
+     */
     @Component
-    private ArtifactFactory artifactFactory;
+    private RepositorySystem repositorySystem;
 
-    @Component
-    private ArtifactMetadataSource artifactMetadataSource;
+    /**
+     * The current repository/network configuration of Maven.
+     */
+    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+    private RepositorySystemSession repositorySystemSession;
 
     /**
      * The Maven Project Object
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+    private MavenProject mavenProject;
 
     /**
-     * In the context of the executing user's shell environment, the local repository would refer
-     * to i.e. "~/.m2/repository". During automated testing, this is null and so they need to
-     * create a local repository themselves.
+     * The project's remote repositories to use for the resolution.
      */
-    @Parameter(property = "localRepository", readonly = true)
-    protected ArtifactRepository localRepository;
-
-    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
-    private List<ArtifactRepository> remoteArtifactRepositories;
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
+    private java.util.List<RemoteRepository> remoteRepositories;
 
     /**
      * Expect these artifact versions to be available Process artifacts of these versions.
@@ -82,7 +74,7 @@ public class VerifyConstantsMojo
      * @since 1.0
      */
     @Parameter(alias = "versions")
-    private List<String> specifiedVersions;
+    private java.util.List<String> specifiedVersions;
 
     /**
      * Flag to easily skip execution.
@@ -92,11 +84,7 @@ public class VerifyConstantsMojo
     @Parameter(property = Static.POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY, defaultValue = "false")
     private boolean skip;
 
-    public VerifyConstantsMojo() {}
-
-    public void execute()
-            throws MojoExecutionException
-    {
+    public void execute() throws MojoExecutionException {
         final I18nContext i18NContext = new I18nContext(i18n);
 
         if (skip) {
@@ -106,122 +94,65 @@ public class VerifyConstantsMojo
             return;
         }
 
-        // Clarify the notions of: current version, remotely-resolvable versions, all versions under consideration.
-        final TreeSet<String> allVersionsAsStrings = TreeSet.ofAll(specifiedVersions).add(project.getVersion());
+        // There are 3 notions of versions to keep track of:
+        //
+        // A) The current Maven project's version. This may or may not be the most recent version.
+        // B) All resolvable versions, from either the user's local or remote Maven repositories.
+        // C) The union of these two: all versions under consideration.
+        final List<String> allVersions = List
+                .ofAll(specifiedVersions != null ? specifiedVersions : List.empty())
+                .append(mavenProject.getVersion())
+                .distinct();
+        final List<String> resolvableVersions = allVersions.remove(mavenProject.getVersion());
 
-        if (allVersionsAsStrings.size() == 1) {
+        if (allVersions.size() == 1) {
             getLog().warn(i18NContext.getText(
                     "vivid.cherimoya.warning.cw-1-skipping-execution-due-to-singular-version",
-                    project.getVersion(),
-                    Static.mavenGAOf(project))
+                    mavenProject.getVersion(),
+                    Static.mavenGAOf(mavenProject))
             );
-            return;
+            // TODO return;
         }
 
         getLog().info(i18NContext.getText(
                 "vivid.cherimoya.action.verifying-constants",
-                allVersionsAsStrings.size(),
-                Static.mavenGAOf(project),
-                Static.listOfVersions(allVersionsAsStrings))
-        );
+                allVersions.size(),
+                Static.mavenGAOf(mavenProject),
+                Static.listOfVersions(allVersions)
+        ));
 
-        // Processing step:
-        //
-        // The set of JARs targeted for scanning are:
-        //     The current project  UNION  Versions listed in the plugin configuration
-
-        final TreeSet<ArtifactVersion> remotelyResolvableVersions = getArtifactVersionsFor(
+        final ExecutionContext executionContext = new ExecutionContext(
                 i18NContext,
-                project.getGroupId(),
-                project.getArtifactId()
+                getLog(),
+                mavenProject,
+                remoteRepositories,
+                repositorySystem,
+                repositorySystemSession
         );
-        final Set<String> remotelyResolvableVersionsAsStrings = remotelyResolvableVersions.toStream()
-                .map(ArtifactVersion::toString)
-                .toSet();
 
-        final TreeSet<String> missingVersions = allVersionsAsStrings.diff(remotelyResolvableVersionsAsStrings);
-        if (!missingVersions.isEmpty()) {
-            throw new MojoExecutionException(
-                    i18NContext.getText(
-                            "vivid.cherimoya.error.ce-2-unresolved-artifact-versions",
-                            Static.listOfVersions(missingVersions))
-            );
-        }
-
-
-        // Processing step:
         //
-        // Sweeping across the subject versions, scan all .class files.
-        // Build DB of all fields annotated with @Constant, recording (GAV, field reference, field value).
-
-
-
-        // Processing step:
+        // Main processing pipeline
         //
-        // Analyze the progression of @Constant values thru the versions.
-        // Emit build-breaking ERRORs on discontinuities.
-        // Clarify the ordering, and document it.
 
-    }
-
-    TreeSet<ArtifactVersion> getArtifactVersionsFor(
-            final I18nContext i18nContext,
-            final String groupId,
-            final String artifactId
-    ) throws MojoExecutionException {
-        try {
-            final Artifact artifact = artifactFactory.createArtifact(
-                    groupId,
-                    artifactId,
-                    MAVEN_VERSION_RANGE_ENTIRE_RANGE,
-                    "", ""
-            );
-            final List<ArtifactVersion> artifactVersions = artifactMetadataSource.retrieveAvailableVersions(
-                    artifact,
-                    localRepository,
-                    remoteArtifactRepositories
-            );
-            return TreeSet.ofAll(artifactVersions);
-        } catch (final ArtifactMetadataRetrievalException e) {
-            throw new MojoExecutionException(
-                    i18nContext.getText("vivid.cherimoya.error.ce-1-internal-error"),
-                    e
-            );
+        // The outer try-catch statement intercepts any sneakily-thrown exceptions, unwrapping
+        // such exceptions in the catch block.
+        try (
+                // Instantiate a new graph DB to store processing data.
+                final ConstantsData constantsData = new ConstantsGraphImpl(executionContext, allVersions)
+        ) {
+            // Map each version to a Jar file.
+            // This Maven goal processes all versions under consideration, both implied (the project) and explicit
+            // (configured in the plugin section in the POM).
+            ArtifactResolution.mapVersionsToClassLoaders(executionContext, resolvableVersions)
+                    .map((v, cr) -> new Tuple2<>(v, AsmScanner.scan(
+                            new AsmFieldAnnotationScanner(executionContext, Constant.class),
+                            List.ofAll(cr)
+                    )))
+                    .forEach(constantsData::recordConstantFields);
+            // TODO Compute constancy, report.
+        } catch (final Exception ex) {
+            SneakyMojoException.unwrapMaybe(ex);
         }
-    }
-
-
-
-
-
-    void x() {
-        // The set of JARs targeted for scanning are:
-        //     The current project  UNION  Versions listed in the plugin configuration
-//            final Stream<Set<Field>> annotatedFields =
-//                    Stream.of(
-//                            Static.classLoaderForDirectory(project.getBuild().getOutputDirectory())
-//                    )
-//                            .map(cl -> ReflectiveScanner.scan(Constant.class, cl))
-//                    ;
-
-        // Sweeping across the subject versions, scan all .class files.
-        // Build DB of all fields annotated with @Constant, recording (GAV, field reference, field value).
-
-//            System.out.println("** FIELDS");
-//            annotatedFields.forEach(
-//                    s -> s.forEach(
-//                            System.out::println
-//                    )
-//            );
     }
 
 }
-
-// (rm -rf target ; mvn install && cd target/it/simple-it/ && mvn vivid.cherimoya:cherimoya-maven-plugin:1.0:verify)
-
-// tests:
-// no pom declarations of version -> skip
-// 1 pom declarations of version, which = current version -> skip
-// 1 pom declaration of version, different from current pom version -> process
-// 1 pom decl, unresolvable -> error
-// 2 pom decls, 1 unresolvable -> error
