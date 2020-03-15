@@ -19,17 +19,42 @@ package vivid.cherimoya.maven;
 import io.vavr.collection.List;
 import io.vavr.collection.Stream;
 import org.apache.maven.project.MavenProject;
+import org.objectweb.asm.Type;
 import vivid.cherimoya.annotation.Constant;
 
 class Static {
 
-    static final String POM_CHERIMOYA_CONSTANTS_SKIP_PROPERTY_KEY = "cherimoya.constant.skip";
+    private static final String CONSTANT_REASON = "Users prefer their existing Maven POM Cherimoya configuration to " +
+            "remain compatible unchanged with newer versions of this plugin.";
 
-    @Constant
+    @Constant(rationale = CONSTANT_REASON)
+    static final String POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY = "reportingLevel";
+
+    @Constant(rationale = CONSTANT_REASON)
+    static final String POM_CHERIMOYA_SKIP_PROPERTY_KEY = "cherimoya.skip";
+
+    @Constant(rationale = CONSTANT_REASON)
     static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
+
+    @Constant(rationale = CONSTANT_REASON)
+    static final String POM_CHERIMOYA_VERSIONS_CONFIGURATION_KEY = "versions";
 
     private Static() {
         // Cannot be instantiated.
+    }
+
+    /**
+     * @return fully-qualified field name, suitable for pasting directly into an IDE's navigation facility
+     */
+    static String fieldFullyQualifiedName(
+            final String clazzName,
+            final String fieldName
+    ) {
+        return String.format(
+                "%s.%s",
+                clazzName,
+                fieldName
+        );
     }
 
     /**

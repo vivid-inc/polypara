@@ -49,7 +49,7 @@ class AsmClassReaders {
      * @return a usable tuple of Java class file data iff the args indicate a Java class file
      */
     private static Option<ClassReader> javaClassFileData(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final InputStream inputStream,
             final String filename
     ) throws IOException {
@@ -69,7 +69,7 @@ class AsmClassReaders {
                 return Option.of(new ClassReader(bis));
             }
 
-            executionContext.log.debug(
+            mojo.getLog().debug(
                     "Ignoring re Java .class file header magic: " +
                             filename
             );
@@ -77,28 +77,28 @@ class AsmClassReaders {
     }
 
     private static Option<ClassReader> classReaderOf(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final InputStream inputStream,
             final String filename
     ) throws IOException {
         if (!isJavaClassFilename(filename)) {
-            executionContext.log.debug(
+            mojo.getLog().debug(
                     "Ignoring re Java class file name extension: " +
                             filename
             );
             return Option.none();
         }
 
-        return javaClassFileData(executionContext, inputStream, filename);
+        return javaClassFileData(mojo, inputStream, filename);
     }
 
     static java.util.List<ClassReader> fromJarFile(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final File jarFile
     ) {
         // TODO Only the first .class file encountered in the Jar is logged by this procedure
 
-        executionContext.log.debug(
+        mojo.getLog().debug(
                 "Examining Jar file " + jarFile.getAbsolutePath()
         );
         try (final JarInputStream jarInputStream = new JarInputStream(
@@ -112,12 +112,12 @@ class AsmClassReaders {
                 }
                 final JarEntry jarEntry = jarInputStream.getNextJarEntry();
                 final Option<ClassReader> next = classReaderOf(
-                        executionContext,
+                        mojo,
                         jarInputStream,
                         jarEntry.getName()
                 );
                 if (next.isDefined()) {
-                    executionContext.log.debug("Queueing Java class file: " + jarEntry.getName());
+                    mojo.getLog().debug("Queueing Java class file: " + jarEntry.getName());
                     classReaders.add(next.get());
                 }
             }
@@ -128,15 +128,15 @@ class AsmClassReaders {
     }
 
     static List<ClassReader> fromFile(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final File file
     ) {
-        executionContext.log.debug(
+        mojo.getLog().debug(
                 "Examining file " + file.getAbsolutePath()
         );
         try {
             final java.util.List<ClassReader> classReaders = new ArrayList<>();
-            scanFile(executionContext, classReaders, file);
+            scanFile(mojo, classReaders, file);
             return classReaders;
         } catch (final IOException e) {
             throw new SneakyMojoException("Exception while re-constituting ASM ClassReader instances from files", e);
@@ -144,25 +144,25 @@ class AsmClassReaders {
     }
 
     private static void scanFile(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final List<ClassReader> classReaders,
             final File entry
     ) throws IOException {
         if (entry.isDirectory()) {
-            scanDirectory(executionContext, classReaders, entry);
+            scanDirectory(mojo, classReaders, entry);
         } else if (entry.isFile()) {
             final Option<ClassReader> classReader = classReaderOf(
-                    executionContext,
+                    mojo,
                     new FileInputStream(entry),
                     entry.getName()
             );
             if (classReader.isDefined()) {
-                executionContext.log.debug("Queueing Java class file: " + entry.getAbsolutePath());
+                mojo.getLog().debug("Queueing Java class file: " + entry.getAbsolutePath());
                 classReaders.add(classReader.get());
             }
         } else {
-            executionContext.log.debug(
-                    executionContext.i18NContext.getText(
+            mojo.getLog().debug(
+                    mojo.getI18nContext().getText(
                             "vivid.cherimoya.message.ignoring-unrecognized-file",
                             entry.getAbsolutePath()
                     )
@@ -171,14 +171,14 @@ class AsmClassReaders {
     }
 
     private static void scanDirectory(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final List<ClassReader> classReaders,
             final File directory
     ) throws IOException {
         final File[] entries = directory.listFiles();
         if (entries != null) {
             for (final File entry : entries) {
-                scanFile(executionContext, classReaders, entry);
+                scanFile(mojo, classReaders, entry);
             }
         }
     }

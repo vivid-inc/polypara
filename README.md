@@ -35,6 +35,8 @@ In your Java code, go through your source code and annotate the appropriate fiel
 static final String DEFAULT_FLOW_CONTROL_MAX_WINDOW_BYTES = 10 * 1024;
 ```
 
+Cherimoya depends on the field value's `equals` method for determining constancy between versions.
+
 Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`:
 The following example specifies 3 versions: `1.0`, `1.1`, and `1.2`, in that order. The current project's version is appended to the end.
 The order of appearance is important, at least for the production of sensible error messages.
@@ -73,7 +75,12 @@ and then run a Maven build. Observe Cherimoya's output:
 ```bash
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ my-project ---
+[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ spyra-levorg ---
+[INFO] Verifying constancy of @Constant field values in 4 versions of com.spyra:levorg  1.4.2  1.4.3  1.4.4  2020.1-SNAPSHOT
+[INFO]
+[ERROR] @Constant field value violation:  com.spyra.levorg.internal.db.payment_request_timeout
+[ERROR]   In versions  0.2 ~ 2.6.5     its value is:  30
+[ERROR]   In versions  3.0.0-SNAPSHOT  its value is:  5
 ...
 ```
 
@@ -101,17 +108,15 @@ mvn clean package
 
 ## TODO
 
-- Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used.
-- The project is suitable for a single artifact version. When the next version of the product in which Cherimoya is readying for release, write code to identify all available versions of the artifact in Maven's local repositories, scan those as well, and then verify constancy. Create tests and usage documentation.
+- Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
+- Cherimoya applies to a single artifact version. When the next version of the product in which Cherimoya is readying for release, write code to identify all available versions of the artifact in Maven's local repositories, scan those as well, and then verify constancy. Create tests and usage documentation.
 - Bake motivation, principles, and design decisions into the documentation and the code.
 - Ensure that Maven can access all indicated versions
-- Ignores the absolute value of and changes to field visibility modifiers (public, package, protected, private).
+- Ignores the absolute value of and changes to field visibility and other modifiers modifiers (public, package, protected, private, static, final, etc.). Optionally check these.
 - The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
 - The impact that using Cherimoya has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
-- Publish to somewhere (Maven Central won't accept our GAV because we don't control the "vivid" TLD)
-- Set up a build on Travis CI
-- Integrate with SonarQube
-- Ensure that the JCenter Maven repository is included in your Maven configuration.
+- Publish to JCenter. Maven Central won't accept our Maven G:A because we don't control the "vivid" TLD.
+- Set up a build on CI, integrate with SonarQube.
 - Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
 - If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
 

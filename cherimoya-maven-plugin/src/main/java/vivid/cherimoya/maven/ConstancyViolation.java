@@ -18,19 +18,19 @@ package vivid.cherimoya.maven;
 
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 
-import java.io.Closeable;
+class ConstancyViolation {
 
-interface ConstantsData
-        extends Closeable {
+    final String fieldName;
+    final List<Tuple2<SimpleVersionRange, Option<Object>>> fieldValueByVersionRange;
 
-    void recordConstantFields(
-            final String version,
-            final List<Tuple2<String, Object>> fields
-    );
-
-    List<ConstancyViolation> constancyViolationDescriptions();
-
-    int constantFieldsCount();
+    ConstancyViolation(
+            final String fieldName,
+            final List<Tuple2<SimpleVersionRange, Option<Object>>> fieldValueByVersionRange
+    ) {
+        this.fieldName = fieldName;
+        this.fieldValueByVersionRange = fieldValueByVersionRange;
+    }
 
 }

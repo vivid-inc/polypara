@@ -66,6 +66,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>3.5.14</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-analysis</artifactId>
             <version>7.3.1</version>
@@ -75,30 +81,6 @@
             <groupId>vivid.cherimoya</groupId>
             <artifactId>cherimoya</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Neo4j -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <version>2.3.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- The test-jar types provide Neo4j's in-memory DB -->
-        <!-- TODO Upgrade to a recent version, and use a tmp dir to hold the DB -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-kernel</artifactId>
-            <version>2.3.12</version>
-            <type>test-jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-io</artifactId>
-            <version>2.3.12</version>
-            <type>test-jar</type>
             <scope>compile</scope>
         </dependency>
 

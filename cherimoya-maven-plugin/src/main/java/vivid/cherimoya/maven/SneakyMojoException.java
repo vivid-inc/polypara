@@ -28,26 +28,20 @@ import org.apache.maven.plugin.MojoExecutionException;
  * Unwrap the causative exception and handle it on the outside with familiar
  * try-catch semantics via {@code ex.getCause()}.
  */
+@SuppressWarnings("serial")
 class SneakyMojoException extends RuntimeException {
 
     SneakyMojoException(final String message, final Throwable cause) { super(message, cause); }
 
-    static void unwrapMaybe(final Exception ex) throws MojoExecutionException {
-        if (ex instanceof SneakyMojoException) {
-            // Unwrap the causative Throwable and report it to Maven
-            final Throwable cause = ex.getCause();
-            throw new MojoExecutionException(
-                    cause.getMessage(),
-                    cause
-            );
-        } else {
-            // Report the Throwable as-is to Maven
-            throw new MojoExecutionException(
-                    // TODO Internal exception CE-1
-                    ex.getMessage(), ex
-            );
-        }
-
+    static void unwrap(
+            final SneakyMojoException ex
+    ) throws MojoExecutionException {
+        // Unwrap the causative Throwable and report it to Maven
+        final Throwable cause = ex.getCause();
+        throw new MojoExecutionException(
+                cause.getMessage(),
+                cause
+        );
     }
 
 }

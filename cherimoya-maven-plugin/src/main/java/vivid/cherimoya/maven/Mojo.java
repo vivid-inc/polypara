@@ -24,29 +24,14 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 import java.util.List;
 
-class ExecutionContext {
+interface Mojo {
 
-    final I18nContext i18NContext;
-    final Log log;
-    final MavenProject mavenProject;
-    final List<RemoteRepository> remoteRepositories;
-    final RepositorySystem repositorySystem;
-    final RepositorySystemSession repositorySystemSession;
-
-    ExecutionContext(
-            final I18nContext i18NContext,
-            final Log log,
-            final MavenProject mavenProject,
-            final List<RemoteRepository> remoteRepositories,
-            final RepositorySystem repositorySystem,
-            final RepositorySystemSession repositorySystemSession
-    ) {
-        this.i18NContext = i18NContext;
-        this.log = log;
-        this.mavenProject = mavenProject;
-        this.remoteRepositories = remoteRepositories;
-        this.repositorySystem = repositorySystem;
-        this.repositorySystemSession = repositorySystemSession;
-    }
+    I18nContext getI18nContext();
+    Log getLog();
+    MavenProject getMavenProject();
+    VerifyConstantsMojo.ReportingLevel getReportingLevel();
+    List<RemoteRepository> getRemoteRepositories();
+    RepositorySystem getRepositorySystem();
+    RepositorySystemSession getRepositorySystemSession();
 
 }

@@ -18,15 +18,26 @@ package vivid.cherimoya.maven;
 
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.collection.SortedMap;
 import io.vavr.collection.Stream;
+import io.vavr.control.Option;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
@@ -38,12 +49,15 @@ class ConstantsGraphImpl
 {
 
     private final GraphDatabaseService db;
-    private ExecutionContext executionContext;
+    private final Path dbTempDirectory;
+    private final HashMap<Object, Object> fieldValueStore;
+    private final Mojo mojo;
+    private final List<String> versionStrings;
 
     /**
      * Graph DB node identifiers.
      */
-    private enum MyLabels implements Label {
+    private enum NodeLabels implements Label {
         /**
          * A specific Maven artifact version.
          */
@@ -59,7 +73,7 @@ class ConstantsGraphImpl
     /**
      * Graph DB relation type identifiers.
      */
-    enum RelationshipTypes implements RelationshipType {
+    private enum RelationshipTypes implements RelationshipType {
         /**
          * A specific instance of a Java class field in a specific Maven artifact version.
          */
@@ -72,50 +86,77 @@ class ConstantsGraphImpl
     }
 
     /**
-     * {@code VERSION} node property: String representation of the Maven artifact version.
-     */
-    static final String VERSION_STRING_PROPERTY = "versionString";
-
-    /**
      * {@code CONSTANT_FIELD} node property: String representation of the fully-
      * qualified Java class field identifier.
      */
-    static final String FQ_FIELD_NAME_PROPERTY = "fullyQualifiedFieldName";
+    private static final String FIELD_FULLY_QUALIFIED_NAME_PROPERTY = "fqn";
 
     /**
-     * {@code CONSTANT_FIELD} node property: Class member field object instance.
+     * {@code CONSTANT_FIELD} node property: Class member field value ID correlating
+     * to the field value store.
      */
-    static final String FIELD_VALUE_PROPERTY = "fieldValue";
+    private static final String FIELD_VALUE_ID_PROPERTY = "valueID";
+
+    /**
+     * {@code VERSION} node property: String representation of the Maven artifact version.
+     */
+    private static final String VERSION_STRING_PROPERTY = "version";
+
+    /**
+     * {@code VERSION} node property: Order of appearance in the sorted list of all
+     * versions under consideration.
+     */
+    private static final String VERSION_ORDINAL_PROPERTY = "ordinal";
 
     ConstantsGraphImpl(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final List<String> versionStrings
-    ) {
-        this.executionContext = executionContext;
+    ) throws IOException {
+        this.mojo = mojo;
+        this.versionStrings = versionStrings;
 
-        executionContext.log.debug("Instantiating a new Neo4j in-memory graph database");
-        this.db = new TestGraphDatabaseFactory().newImpermanentDatabase();
+        this.dbTempDirectory = Files.createTempDirectory("cherimoya");
+        this.db = new GraphDatabaseFactory()
+                .newEmbeddedDatabase(dbTempDirectory.toFile());
         createConstraints();
         createArtifactVersionNodes(versionStrings);
+        mojo.getLog().debug(
+                "Instantiated a new database in " + this.dbTempDirectory
+        );
+
+        this.fieldValueStore = new HashMap<>();
     }
 
-    @Override
+    /**
+     * @return an ID that uniquely identifies this field
+     */
+    private String recordFieldValue(
+            final Object fieldValue
+    ) {
+        final String fieldID = UUID.randomUUID().toString();
+        fieldValueStore.put(fieldID, fieldValue);
+        return fieldID;
+    }
+
     public void close() {
-        if (db != null) {
-            System.out.println("\n-- Neo4j DUMP --");
-            withinTransaction(() -> Stream.ofAll(db.getAllNodes())
-                    .forEach((n) -> {
-                        System.out.println(String.format("Node: %s %s", n.getLabels(), n.getAllProperties()));
-                        n.getRelationships().forEach(
-                                (r) -> System.out.println(
-                                        String.format("  -> %s : %s",
-                                                r.getEndNode().getLabels(),
-                                                r.getAllProperties())
-                                )
-                        );
-                    }));
-            db.shutdown();
-        }
+//        System.out.println("\n-- Neo4j DUMP --");
+//        withinTransaction(() ->
+//                Stream.ofAll(db.getAllNodes())
+//                        .forEach((n) -> {
+//                            System.out.println(String.format("Node: %s %s", n.getLabels(), n.getAllProperties()));
+//                            n.getRelationships(Direction.OUTGOING).forEach(
+//                                    (r) -> System.out.println(
+//                                            String.format("        -> %s %s : %s",
+//                                                    r.getEndNode().getLabels(),
+//                                                    r.getEndNode().getAllProperties(),
+//                                                    r.getAllProperties())
+//                                    )
+//                            );
+//                        }));
+//        System.out.println();
+
+        db.shutdown();
+        dbTempDirectory.toFile().deleteOnExit();
     }
 
     /**
@@ -127,39 +168,59 @@ class ConstantsGraphImpl
     private void createArtifactVersionNodes(
             final List<String> versions
     ) {
-        final Function<String, Node> createVersionNode =
-                versionString -> {
-                    final Node node = db.createNode(MyLabels.VERSION);
-                    node.setProperty(VERSION_STRING_PROPERTY, versionString);
-                    return node;
-                };
+        withinTransaction(() -> {
+            final Function<Tuple2<String, Integer>, Node> createVersionNode =
+                    versionDesc -> {
+                        final Node node = db.createNode(NodeLabels.VERSION);
+                        node.setProperty(VERSION_STRING_PROPERTY, versionDesc._1);
+                        node.setProperty(VERSION_ORDINAL_PROPERTY, versionDesc._2);
+                        return node;
+                    };
 
-        final BinaryOperator<Node> relateVersionNodes =
-                (versionNode, nextVersionNode) -> {
-                    versionNode.createRelationshipTo(
-                            nextVersionNode,
-                            RelationshipTypes.NEXT_VERSION
-                    );
-                    return nextVersionNode;
-                };
+            final BinaryOperator<Node> relateVersionNodes =
+                    (cursor, next) -> {
+                        cursor.createRelationshipTo(
+                                next,
+                                RelationshipTypes.NEXT_VERSION
+                        );
+                        return next;
+                    };
 
-        executionContext.log.debug("Creating graph nodes for versions:  " + Static.listOfVersions(versions));
-        withinTransaction(() ->
+            final Stream<Integer> versionOrder =
+                    Stream.iterate(0, i -> i + 1);
+
+            mojo.getLog().debug(
+                    "Creating graph nodes for versions:  " +
+                            Static.listOfVersions(versions)
+            );
             versions
+                    .zip(versionOrder)
                     .map(createVersionNode)
                     // Until a better VAVR idiom is used to express the relating of
                     // consecutive versions, the following reduce() abuse will have to do:
-                    .reduceLeft(relateVersionNodes)
-        );
+                    .reduceLeft(relateVersionNodes);
+        });
     }
 
     private void createConstraints() {
-        executionContext.log.debug("Creating graph database constraints");
+        mojo.getLog().debug("Creating graph database constraints");
 
-        withinTransaction(() -> db.schema()
-                .constraintFor(MyLabels.VERSION)
-                .assertPropertyIsUnique(VERSION_STRING_PROPERTY)
-                .create());
+        withinTransaction(() -> {
+            db.schema()
+                    .constraintFor(NodeLabels.CONSTANT_FIELD)
+                    .assertPropertyIsUnique(FIELD_FULLY_QUALIFIED_NAME_PROPERTY)
+                    .create();
+            db.schema()
+                    .constraintFor(NodeLabels.VERSION)
+                    .assertPropertyIsUnique(VERSION_STRING_PROPERTY)
+                    .create();
+            db.schema()
+                    .constraintFor(NodeLabels.VERSION)
+                    .assertPropertyIsUnique(VERSION_ORDINAL_PROPERTY)
+                    .create();
+            // TODO [NEXT_VERSION] can't share the same start and end node
+            // TODO field value ID property is unique
+        });
     }
 
     private Node findOrCreate(
@@ -184,22 +245,9 @@ class ConstantsGraphImpl
     private Node retrieveVersionNode(
             final String version
     ) {
-        final String v = version.toString();
-        final Node n = db.findNode(MyLabels.VERSION, VERSION_STRING_PROPERTY, v);
-
-        if (n == null) {
-//            throw new MojoExecutionException(
-//                    iiiiiiI18n.getText(
-//                            "vivid.cherimoya.error.ce-1-internal-error",
-//                            "Unexpectedly could not find the artifact version node for " + artifactVersion
-//                    )
-//            );
-        }
-
-        return n;
+        return db.findNode(NodeLabels.VERSION, VERSION_STRING_PROPERTY, version);
     }
 
-    @Override
     public void recordConstantFields(
             final String version,
             final List<Tuple2<String, Object>> fields
@@ -214,16 +262,17 @@ class ConstantsGraphImpl
             Tuple2<String, Object> field
     ) {
         withinTransaction(() -> {
-            // The field node represents a field bearing the @Constant annotation.
-            // The existence of the field node indicates that the field
-            // is present in one or more versions.
+            // The field node represents a field bearing the @Constant
+            // annotation. The existence of the field node indicates
+            // that the field is present in one or more versions.
             final Node fieldNode = findOrCreate(
-                    MyLabels.CONSTANT_FIELD,
-                    FQ_FIELD_NAME_PROPERTY,
+                    NodeLabels.CONSTANT_FIELD,
+                    FIELD_FULLY_QUALIFIED_NAME_PROPERTY,
                     field._1
             );
 
-            // The version in which the field exists. The versions are expected to already be made.
+            // The version in which the field exists. The versions are
+            // expected to already be made.
             final Node versionNode = retrieveVersionNode(version);
 
             // Relate the constant field node to its version.
@@ -232,7 +281,8 @@ class ConstantsGraphImpl
                     versionNode,
                     RelationshipTypes.FIELD_INSTANCE
             );
-            r.setProperty(FIELD_VALUE_PROPERTY, field._2);
+            final String fieldID = recordFieldValue(field._2);
+            r.setProperty(FIELD_VALUE_ID_PROPERTY, fieldID);
         });
     }
 
@@ -242,7 +292,78 @@ class ConstantsGraphImpl
         try (final Transaction tx = db.beginTx()) {
             runnable.run();
             tx.success();
-        } // TODO catch { tx.failure() }
+        }
+    }
+
+    public int constantFieldsCount() {
+        final ResourceIterator<Object> resultIterator =
+                db.execute(
+                        "MATCH (n:CONSTANT_FIELD) RETURN count(n) as count"
+                )
+                        .columnAs("count");
+        final Object result = resultIterator.next();
+        return Integer.parseInt(result.toString());
+    }
+
+    public List<ConstancyViolation> constancyViolationDescriptions() {
+        java.util.List<ConstancyViolation> violations = new ArrayList<>();
+
+        withinTransaction(() -> {
+            final ResourceIterator<Node> fields = db.findNodes(NodeLabels.CONSTANT_FIELD);
+            fields.forEachRemaining(field -> {
+                final String fullyQualifiedFieldName = String.valueOf(field.getProperty(FIELD_FULLY_QUALIFIED_NAME_PROPERTY));
+                final SortedMap<String, Option<Object>> version2value = this.versionStrings.toSortedMap(
+                        v -> v,
+                        v -> Option.none()
+                );
+                final Iterable<Relationship> fieldInstances =
+                        field.getRelationships(Direction.OUTGOING, RelationshipTypes.FIELD_INSTANCE);
+
+                final BiFunction<SortedMap<String, Option<Object>>, Relationship, SortedMap<String, Option<Object>>> noteFieldInstanceValue =
+                        (v2v, r) -> v2v.put(
+                                String.valueOf(r.getEndNode().getProperty(VERSION_STRING_PROPERTY)),
+                                Option.of(
+                                        fieldValueStore.get(r.getProperty(FIELD_VALUE_ID_PROPERTY))
+                                )
+                        );
+
+                final SortedMap<SimpleVersionRange, Option<Object>> valueByVersion = Stream
+                        .ofAll(fieldInstances)
+                        .foldLeft(version2value, noteFieldInstanceValue)
+                        .map((ver, val) -> new Tuple2<>(new SimpleVersionRange(ver, Option.none()), val));
+
+                // TODO remove head and tail elements where the field is not defined. yielding an empty list is an internal error.
+
+                final BiFunction<
+                        SortedMap<SimpleVersionRange, Option<Object>>,
+                        Tuple2<SimpleVersionRange, Option<Object>>,
+                        SortedMap<SimpleVersionRange, Option<Object>>
+                        > collapseAdjacentEqualValues =
+                        (v2v, cur) -> {
+                    final Tuple2<SimpleVersionRange, Option<Object>> prev = v2v.last();
+                            if (prev._2.equals(cur._2)) {
+                                return v2v.dropRight(1).put(
+                                        new SimpleVersionRange(
+                                                prev._1.start, Option.of(cur._1.start)),
+                                        prev._2
+                                );
+                            } else {
+                                return v2v.put(cur);
+                            }
+                        };
+
+                SortedMap<SimpleVersionRange, Option<Object>> x = valueByVersion.drop(1)
+                        .foldLeft(valueByVersion.take(1), collapseAdjacentEqualValues);
+
+                if (x.length() >= 2) {
+                    final ConstancyViolation cv = new ConstancyViolation(fullyQualifiedFieldName, x.toList());
+                    violations.add(cv);
+                }
+
+            });
+        });
+
+        return List.ofAll(violations);
     }
 
 }

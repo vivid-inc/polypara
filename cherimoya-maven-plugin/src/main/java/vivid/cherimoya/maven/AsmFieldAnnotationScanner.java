@@ -25,20 +25,22 @@ import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 
+// TODO Print .class file paths within jars like this sample from maven-compiler-plugin:    /home/ty/.m2/repository/org/neo4j/neo4j-graphdb-api/4.0.0/neo4j-graphdb-api-4.0.0.jar(org/neo4j/dbms/api/DatabaseManagementService.class)
+
 class AsmFieldAnnotationScanner extends AsmClassVisitorAdapter<List<Tuple2<String, Object>>> {
 
     private final ArrayList<Tuple2<String, Object>> accumulator;
-    private ExecutionContext executionContext;
+    private Mojo mojo;
     private final Class<?> annotationClass;
 
     private String clazzName;
 
     AsmFieldAnnotationScanner(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final Class<?> annotationClass
     ) {
         super(Opcodes.ASM7);
-        this.executionContext = executionContext;
+        this.mojo = mojo;
         this.annotationClass = annotationClass;
 
         this.accumulator = new ArrayList<>();
@@ -70,7 +72,7 @@ class AsmFieldAnnotationScanner extends AsmClassVisitorAdapter<List<Tuple2<Strin
 
     @Override
     void logStart() {
-        executionContext.log.debug(
+        mojo.getLog().debug(
                 "Scanning for class fields annotated with: " + annotationClass
         );
     }
@@ -108,12 +110,12 @@ class AsmFieldAnnotationScanner extends AsmClassVisitorAdapter<List<Tuple2<Strin
                 final boolean visible
         ) {
             if (isTargetAnnotation(descriptor)) {
-                final String fieldFullyQualifiedName = String.format(
-                        "%s.%s",
-                        Type.getObjectType(clazzName).getClassName(),
-                        fieldName
-                );
-                accumulator.add(new Tuple2<>(fieldFullyQualifiedName, fieldValue));
+                accumulator.add(new Tuple2<>(
+                        Static.fieldFullyQualifiedName(
+                                Type.getObjectType(clazzName).getClassName(),
+                                fieldName
+                        ),
+                        fieldValue));
             }
             return super.visitAnnotation(descriptor, visible);
         }

@@ -34,71 +34,74 @@ class ArtifactResolution {
     }
 
     static Map<String, java.util.List<ClassReader>> mapVersionsToClassLoaders(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final List<String> resolvableVersions
     ) {
         return resolvableVersions.toMap(
                 v -> v,
                 v -> classLoaderForResolvableVersion(
-                        executionContext,
-                        executionContext.mavenProject.getGroupId(),
-                        executionContext.mavenProject.getArtifactId(),
+                        mojo,
+                        mojo.getMavenProject().getGroupId(),
+                        mojo.getMavenProject().getArtifactId(),
                         v)
         )
                 .put(
-                        executionContext.mavenProject.getVersion(),
+                        mojo.getMavenProject().getVersion(),
                         AsmClassReaders.fromFile(
-                                executionContext,
+                                mojo,
                                 new File(
-                                        executionContext.mavenProject.getBuild().getOutputDirectory()
+                                        mojo.getMavenProject().getBuild().getOutputDirectory()
                                 )
                         )
                 );
     }
 
     private static java.util.List<ClassReader> classLoaderForResolvableVersion(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final String groupId,
             final String artifactId,
             final String version
     ) {
         final ArtifactResult artifactResult = resolveArtifact(
-                executionContext,
+                mojo,
                 groupId, artifactId, version
         );
 
         return AsmClassReaders.fromJarFile(
-                executionContext,
+                mojo,
                 artifactResult.getArtifact().getFile()
         );
     }
 
     private static ArtifactResult resolveArtifact(
-            final ExecutionContext executionContext,
+            final Mojo mojo,
             final String groupId,
             final String artifactId,
             final String version
     ) {
-        final Artifact artifact = new DefaultArtifact(
-                Static.mavenGAVOf(
-                        groupId,
-                        artifactId,
-                        version
-                )
+        final String gav = Static.mavenGAVOf(
+                groupId,
+                artifactId,
+                version
         );
+
+        final Artifact artifact = new DefaultArtifact(gav);
 
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
-        artifactRequest.setRepositories(executionContext.remoteRepositories);
+        artifactRequest.setRepositories(mojo.getRemoteRepositories());
 
         try {
-            return executionContext.repositorySystem.resolveArtifact(
-                    executionContext.repositorySystemSession,
+            return mojo.getRepositorySystem().resolveArtifact(
+                    mojo.getRepositorySystemSession(),
                     artifactRequest
             );
         } catch (final ArtifactResolutionException e) {
             throw new SneakyMojoException(
-                    "Could not resolve", // TODO Use a CE- message
+                    mojo.getI18nContext().getText(
+                            "vivid.cherimoya.error.ce-3-unresolved-artifact-versions",
+                            gav
+                    ),
                     e
             );
         }
