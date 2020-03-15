@@ -1,17 +1,15 @@
 /*
  * Copyright 2017 The Cherimoya Authors
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package vivid.cherimoya.maven;
@@ -139,24 +137,11 @@ class ConstantsGraphImpl
     }
 
     public void close() {
-//        System.out.println("\n-- Neo4j DUMP --");
-//        withinTransaction(() ->
-//                Stream.ofAll(db.getAllNodes())
-//                        .forEach((n) -> {
-//                            System.out.println(String.format("Node: %s %s", n.getLabels(), n.getAllProperties()));
-//                            n.getRelationships(Direction.OUTGOING).forEach(
-//                                    (r) -> System.out.println(
-//                                            String.format("        -> %s %s : %s",
-//                                                    r.getEndNode().getLabels(),
-//                                                    r.getEndNode().getAllProperties(),
-//                                                    r.getAllProperties())
-//                                    )
-//                            );
-//                        }));
-//        System.out.println();
-
         db.shutdown();
+        System.out.println("db.shutdown");
+
         dbTempDirectory.toFile().deleteOnExit();
+        System.out.println("tmpdir");
     }
 
     /**
@@ -367,3 +352,6 @@ class ConstantsGraphImpl
     }
 
 }
+
+// TODO record and compare not just the field value but also its type
+// TODO support field renaming through refactoring
