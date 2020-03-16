@@ -236,17 +236,15 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
                         )
                 );
             }
-        } catch (final SneakyMojoException ex) {
-            SneakyMojoException.unwrap(ex);
-        } catch (final MojoFailureException ex) {
-            throw ex;
-        } catch (final Exception ex) {
-            throw new MojoExecutionException(
-                    i18nContext.getText(
-                            "vivid.cherimoya.error.ce-1-internal-error",
-                            "Unexpected exception"
-                    ),
-                    ex
+        } catch (final SneakyMojoException e) {
+            throw SneakyMojoException.unwrap(e);
+        } catch (final MojoFailureException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw CE1InternalError.newMojoExEx(
+                    this,
+                    "Unexpected exception",
+                    e
             );
         }
     }

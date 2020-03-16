@@ -19,10 +19,18 @@ import io.vavr.collection.Stream;
 import org.apache.maven.project.MavenProject;
 import vivid.cherimoya.annotation.Constant;
 
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
+
 class Static {
 
-    private static final String CONSTANT_REASON = "Users prefer their existing Maven POM Cherimoya configuration to " +
-            "remain compatible unchanged with newer versions of this plugin.";
+    private static final String CONSTANT_REASON =
+            "Users prefer their existing Maven POM Cherimoya configuration to " +
+            "remain compatible as-is with newer versions of this plugin.";
 
     @Constant(rationale = CONSTANT_REASON)
     static final String POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY = "reportingLevel";
@@ -38,6 +46,31 @@ class Static {
 
     private Static() {
         // Cannot be instantiated.
+    }
+
+    /**
+     * From https://stackoverflow.com/questions/33242577/how-do-i-turn-a-java-enumeration-into-a-stream
+     */
+    static <T> java.util.stream.Stream<T> enumerationAsStream(
+            final Enumeration<T> e
+    ) {
+        return StreamSupport.stream(
+                new Spliterators.AbstractSpliterator<T>(Long.MAX_VALUE, Spliterator.ORDERED) {
+                    public boolean tryAdvance(final Consumer<? super T> action) {
+                        if (e.hasMoreElements()) {
+                            action.accept(e.nextElement());
+                            return true;
+                        }
+                        return false;
+                    }
+                    @Override
+                    public void forEachRemaining(final Consumer<? super T> action) {
+                        while (e.hasMoreElements()) {
+                            action.accept(e.nextElement());
+                        }
+                    }
+                },
+                false);
     }
 
     /**
@@ -91,6 +124,20 @@ class Static {
                 groupId,
                 artifactId,
                 version
+        );
+    }
+
+    /**
+     * @return absolute path of a Java Jar file and a specific entry within it
+     */
+    static String pathInJarFile(
+            final File jarFile,
+            final String entryName
+    ) {
+        return String.format(
+                "%s(%s)",
+                jarFile.getAbsolutePath(),
+                entryName
         );
     }
 

@@ -30,13 +30,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 class SneakyMojoException extends RuntimeException {
 
     SneakyMojoException(final String message, final Throwable cause) { super(message, cause); }
+    SneakyMojoException(final Throwable cause) { super(cause.getMessage(), cause); }
 
-    static void unwrap(
+    static MojoExecutionException unwrap(
             final SneakyMojoException ex
-    ) throws MojoExecutionException {
-        // Unwrap the causative Throwable and report it to Maven
+    ) {
+        // Unwrap the causative Throwable
         final Throwable cause = ex.getCause();
-        throw new MojoExecutionException(
+        return new MojoExecutionException(
                 cause.getMessage(),
                 cause
         );

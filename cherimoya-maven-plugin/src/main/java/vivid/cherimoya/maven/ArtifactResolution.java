@@ -97,7 +97,7 @@ class ArtifactResolution {
         } catch (final ArtifactResolutionException e) {
             throw new SneakyMojoException(
                     mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-3-unresolved-artifact-versions",
+                            "vivid.cherimoya.error.ce-3-artifact-resolution-failure",
                             gav
                     ),
                     e

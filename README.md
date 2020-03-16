@@ -103,6 +103,7 @@ __Skip execution__ by setting the `cherimoya.skip` property to `true` within plu
 ```
 
 
+
 ## Development
 
 Run the tests and build the deliverables:
@@ -111,8 +112,10 @@ bin/test.sh
 ```
 
 #### Roadmap
-- Support for refactoring of a `@Constant` field's FQN and type.
-- Optionally check field visibility and other modifiers (public, static, final, etc.)
+
+- Support the refactoring of a `@Constant` field's FQN or type.
+- Optionally check field type, visibility, and other modifiers.
+
 
 
 ## TODO

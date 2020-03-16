@@ -59,4 +59,5 @@ class SimpleVersionRange implements Comparable<SimpleVersionRange> {
     public int hashCode() {
         return Objects.hash(start, end);
     }
+
 }

@@ -23,8 +23,6 @@ import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 
-// TODO Print .class file paths within jars like this sample from maven-compiler-plugin:    /home/ty/.m2/repository/org/neo4j/neo4j-graphdb-api/4.0.0/neo4j-graphdb-api-4.0.0.jar(org/neo4j/dbms/api/DatabaseManagementService.class)
-
 class AsmFieldAnnotationScanner extends AsmClassVisitorAdapter<List<Tuple2<String, Object>>> {
 
     private final ArrayList<Tuple2<String, Object>> accumulator;

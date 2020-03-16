@@ -14,18 +14,20 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.Stream;
 import io.vavr.control.Option;
+import org.apache.commons.compress.utils.IOUtils;
 import org.objectweb.asm.ClassReader;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.util.jar.JarFile;
 
 class AsmClassReaders {
 
@@ -43,86 +45,136 @@ class AsmClassReaders {
         return filename.endsWith(JAVA_CLASS_FILENAME_SUFFIX);
     }
 
-    /**
-     * @return a usable tuple of Java class file data iff the args indicate a Java class file
-     */
-    private static Option<ClassReader> javaClassFileData(
-            final Mojo mojo,
-            final InputStream inputStream,
-            final String filename
-    ) throws IOException {
-        // Does the file header indicate Java .class file magic?
-            final BufferedInputStream bis = new BufferedInputStream(inputStream);
-            bis.mark(4);
-            final String magic = String.format(
-                    "%02X%02X%02X%02X",
-                    bis.read(),
-                    bis.read(),
-                    bis.read(),
-                    bis.read()
-            );
-            bis.reset();
-
-            if (JAVA_CLASS_FILE_MAGIC_HEADER.equalsIgnoreCase(magic)) {
-                return Option.of(new ClassReader(bis));
-            }
-
-            mojo.getLog().debug(
-                    "Ignoring re Java .class file header magic: " +
-                            filename
-            );
-            return Option.none();
+    private static boolean hasJavaClassFileMagic(
+            final byte[] inputStreamBytes
+    ) {
+        final String magic = String.format(
+                "%02X%02X%02X%02X",
+                inputStreamBytes[0], inputStreamBytes[1], inputStreamBytes[2], inputStreamBytes[3]
+        );
+        return JAVA_CLASS_FILE_MAGIC_HEADER.equalsIgnoreCase(magic);
     }
 
     private static Option<ClassReader> classReaderOf(
             final Mojo mojo,
-            final InputStream inputStream,
-            final String filename
-    ) throws IOException {
-        if (!isJavaClassFilename(filename)) {
+            final Path path
+    ) {
+        try {
+            if (!isJavaClassFilename(path.toString())) {
+                mojo.getLog().debug(
+                        "Ignoring re Java class file name extension: " +
+                                path
+                );
+                return Option.none();
+            }
+
+            final byte[] bytes = IOUtils.toByteArray(new FileInputStream(path.toFile()));
+            if (!hasJavaClassFileMagic(bytes)) {
+                mojo.getLog().debug(
+                        "Ignoring re Java .class file header magic: " +
+                                path
+                );
+                return Option.none();
+            }
+
+            return Option.of(new ClassReader(bytes));
+        } catch (final IOException e) {
+            throw new SneakyMojoException(
+                    mojo.getI18nContext().getText(
+                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                            path
+                    ),
+                    e
+            );
+        }
+    }
+
+    private static Option<ClassReader> classReaderOf(
+            final Mojo mojo,
+            final File file,
+            final JarFile jarFile,
+            final JarEntry jarEntry
+    ) {
+        if (!isJavaClassFilename(jarEntry.getName())) {
             mojo.getLog().debug(
                     "Ignoring re Java class file name extension: " +
-                            filename
+                            Static.pathInJarFile(file, jarEntry.getName())
             );
             return Option.none();
         }
 
-        return javaClassFileData(mojo, inputStream, filename);
+        try (
+                final InputStream inputStream = jarFile.getInputStream(jarEntry)
+        ) {
+            final byte[] bytes = IOUtils.toByteArray(inputStream);
+            if (!hasJavaClassFileMagic(bytes)) {
+                mojo.getLog().debug(
+                        "Ignoring re Java .class file header magic: " +
+                                jarEntry.getName()
+                );
+                return Option.none();
+            }
+
+            mojo.getLog().debug("Queueing Java class file: " +
+                    Static.pathInJarFile(file, jarEntry.getName())
+            );
+            return Option.of(
+                    new ClassReader(bytes)
+            );
+        } catch (final IOException e) {
+            throw new SneakyMojoException(
+                    mojo.getI18nContext().getText(
+                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                            jarFile
+                    ),
+                    e
+            );
+        }
+    }
+
+    private static Stream<JarEntry> streamOfJarEntries(
+            final JarFile jarFile
+    ) {
+        return Stream.ofAll(
+                Static.enumerationAsStream(
+                        jarFile.entries()
+                )
+        );
     }
 
     static java.util.List<ClassReader> fromJarFile(
             final Mojo mojo,
-            final File jarFile
+            final File file
     ) {
-        // TODO Only the first .class file encountered in the Jar is logged by this procedure
-
         mojo.getLog().debug(
-                "Examining Jar file " + jarFile.getAbsolutePath()
+                "Examining Jar file " + file.getAbsolutePath()
         );
-        try (final JarInputStream jarInputStream = new JarInputStream(
-                new FileInputStream(jarFile)
-        )
+
+        try (
+                final JarFile jarFile = new JarFile(file)
         ) {
-            final java.util.List<ClassReader> classReaders = new ArrayList<>();
-            while (true) {
-                if (jarInputStream.available() <= 0) {
-                    break;
-                }
-                final JarEntry jarEntry = jarInputStream.getNextJarEntry();
-                final Option<ClassReader> next = classReaderOf(
-                        mojo,
-                        jarInputStream,
-                        jarEntry.getName()
-                );
-                if (next.isDefined()) {
-                    mojo.getLog().debug("Queueing Java class file: " + jarEntry.getName());
-                    classReaders.add(next.get());
-                }
-            }
-            return classReaders;
+            return streamOfJarEntries(jarFile)
+                    .map(e -> classReaderOf(mojo, file, jarFile, e))
+                    .flatMap(t -> t)
+                    .toJavaList();
         } catch (final IOException e) {
-            throw new SneakyMojoException("Exception while re-constituting ASM ClassReader instances from Jar file", e);
+            throw new SneakyMojoException(
+                    mojo.getI18nContext().getText(
+                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                            file.getAbsolutePath()
+                    ),
+                    e
+            );
         }
+    }
+
+    private static Stream<Path> streamOfPaths(
+            final File file
+    ) throws IOException {
+        return Stream.ofAll(
+                Files.walk(file.toPath())
+                        .filter(Files::isRegularFile)
+        );
     }
 
     static List<ClassReader> fromFile(
@@ -133,51 +185,18 @@ class AsmClassReaders {
                 "Examining file " + file.getAbsolutePath()
         );
         try {
-            final java.util.List<ClassReader> classReaders = new ArrayList<>();
-            scanFile(mojo, classReaders, file);
-            return classReaders;
+            return streamOfPaths(file)
+                    .map(p -> classReaderOf(mojo, p))
+                    .flatMap(t -> t)
+                    .toJavaList();
         } catch (final IOException e) {
-            throw new SneakyMojoException("Exception while re-constituting ASM ClassReader instances from files", e);
-        }
-    }
-
-    private static void scanFile(
-            final Mojo mojo,
-            final List<ClassReader> classReaders,
-            final File entry
-    ) throws IOException {
-        if (entry.isDirectory()) {
-            scanDirectory(mojo, classReaders, entry);
-        } else if (entry.isFile()) {
-            final Option<ClassReader> classReader = classReaderOf(
-                    mojo,
-                    new FileInputStream(entry),
-                    entry.getName()
-            );
-            if (classReader.isDefined()) {
-                mojo.getLog().debug("Queueing Java class file: " + entry.getAbsolutePath());
-                classReaders.add(classReader.get());
-            }
-        } else {
-            mojo.getLog().debug(
+            throw new SneakyMojoException(
                     mojo.getI18nContext().getText(
-                            "vivid.cherimoya.message.ignoring-unrecognized-file",
-                            entry.getAbsolutePath()
-                    )
+                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                            file.getAbsolutePath()
+                    ),
+                    e
             );
-        }
-    }
-
-    private static void scanDirectory(
-            final Mojo mojo,
-            final List<ClassReader> classReaders,
-            final File directory
-    ) throws IOException {
-        final File[] entries = directory.listFiles();
-        if (entries != null) {
-            for (final File entry : entries) {
-                scanFile(mojo, classReaders, entry);
-            }
         }
     }
 

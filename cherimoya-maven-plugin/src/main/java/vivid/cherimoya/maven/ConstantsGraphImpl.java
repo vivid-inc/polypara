@@ -19,6 +19,7 @@ import io.vavr.collection.List;
 import io.vavr.collection.SortedMap;
 import io.vavr.collection.Stream;
 import io.vavr.control.Option;
+import org.codehaus.plexus.util.FileUtils;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
@@ -38,6 +39,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Manages {@code Constant}-related data in a graph database.
@@ -138,10 +140,15 @@ class ConstantsGraphImpl
 
     public void close() {
         db.shutdown();
-        System.out.println("db.shutdown");
 
-        dbTempDirectory.toFile().deleteOnExit();
-        System.out.println("tmpdir");
+        try {
+            FileUtils.deleteDirectory(dbTempDirectory.toFile());
+        } catch (final IOException e) {
+            mojo.getLog().info(
+                    "Could not delete temporary DB directory: " + dbTempDirectory,
+                    e
+            );
+        }
     }
 
     /**
@@ -203,12 +210,10 @@ class ConstantsGraphImpl
                     .constraintFor(NodeLabels.VERSION)
                     .assertPropertyIsUnique(VERSION_ORDINAL_PROPERTY)
                     .create();
-            // TODO [NEXT_VERSION] can't share the same start and end node
-            // TODO field value ID property is unique
         });
     }
 
-    private Node findOrCreate(
+    private Node findOrCreateNode(
             final Label label,
             final String key,
             final Object value
@@ -250,7 +255,7 @@ class ConstantsGraphImpl
             // The field node represents a field bearing the @Constant
             // annotation. The existence of the field node indicates
             // that the field is present in one or more versions.
-            final Node fieldNode = findOrCreate(
+            final Node fieldNode = findOrCreateNode(
                     NodeLabels.CONSTANT_FIELD,
                     FIELD_FULLY_QUALIFIED_NAME_PROPERTY,
                     field._1
@@ -312,20 +317,32 @@ class ConstantsGraphImpl
                                 )
                         );
 
+                final Predicate<Tuple2<SimpleVersionRange, Option<Object>>> undefVal = e -> e._2.isEmpty();
+
                 final SortedMap<SimpleVersionRange, Option<Object>> valueByVersion = Stream
                         .ofAll(fieldInstances)
                         .foldLeft(version2value, noteFieldInstanceValue)
-                        .map((ver, val) -> new Tuple2<>(new SimpleVersionRange(ver, Option.none()), val));
+                        .map((ver, val) -> new Tuple2<>(new SimpleVersionRange(ver, Option.none()), val))
+                        .dropWhile(undefVal) // TODO also remove tail elements similarly
+                        ;
+                if (valueByVersion.isEmpty()) {
+                    throw new SneakyMojoException(
+                            CE1InternalError.newMojoExEx(
+                                    mojo,
+                                    String.format(
+                                            "Field %s cannot be devoid of values over all versions",
+                                            fullyQualifiedFieldName
+                                    )
+                            )
+                    );
+                }
 
-                // TODO remove head and tail elements where the field is not defined. yielding an empty list is an internal error.
-
-                final BiFunction<
-                        SortedMap<SimpleVersionRange, Option<Object>>,
+                final BiFunction<SortedMap<SimpleVersionRange, Option<Object>>,
                         Tuple2<SimpleVersionRange, Option<Object>>,
-                        SortedMap<SimpleVersionRange, Option<Object>>
-                        > collapseAdjacentEqualValues =
+                        SortedMap<SimpleVersionRange, Option<Object>>>
+                        collapseAdjacentEqualValues =
                         (v2v, cur) -> {
-                    final Tuple2<SimpleVersionRange, Option<Object>> prev = v2v.last();
+                            final Tuple2<SimpleVersionRange, Option<Object>> prev = v2v.last();
                             if (prev._2.equals(cur._2)) {
                                 return v2v.dropRight(1).put(
                                         new SimpleVersionRange(
@@ -352,6 +369,3 @@ class ConstantsGraphImpl
     }
 
 }
-
-// TODO record and compare not just the field value but also its type
-// TODO support field renaming through refactoring

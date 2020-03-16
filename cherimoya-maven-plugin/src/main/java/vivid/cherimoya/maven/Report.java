@@ -61,11 +61,10 @@ class Report {
                 .max();
         if (versionRangeColumnWidth.isEmpty()) {
             throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-1-internal-error",
+                    CE1InternalError.newMojoExEx(
+                            mojo,
                             "Could not calculate the width of the version range column"
-                    ),
-                    new IllegalStateException()
+                    )
             );
         }
 
@@ -115,15 +114,13 @@ class Report {
             return mojo.getLog()::warn;
         } else {
             throw new SneakyMojoException(
-                    // TODO Create a convenience method in SneakyMojoException
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-1-internal-error",
+                    CE1InternalError.newMojoExEx(
+                            mojo,
                             String.format(
                                     "Unexpected ReportingLevel value: %s",
                                     mojo.getReportingLevel()
                             )
-                    ),
-                    new IllegalStateException()
+                    )
             );
         }
     }
