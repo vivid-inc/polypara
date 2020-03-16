@@ -86,7 +86,7 @@ $ mvn install
 ```
 
 __Break the build__ by keeping the `reportingLevel` configuration parameter set to the default of `ERROR`.
-This behavior can be demoted to a warning that doesn't break the build by setting it to a `WARNING` instead:
+This behavior can be demoted to a warning that doesn't break the build by setting the parameter to `WARNING` instead:
 
 ```xml
                <configuration>
@@ -105,9 +105,9 @@ __Skip execution__ by setting the `cherimoya.skip` property to `true` within plu
 
 ## Development
 
-Run Maven to run the tests and build the deliverables:
+Run the tests and build the deliverables:
 ```bash
-mvn clean package
+bin/test.sh
 ```
 
 #### Roadmap
