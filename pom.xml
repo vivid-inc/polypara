@@ -38,6 +38,10 @@
     <scm>
         <url>https://github.com/vivid-inc/cherimoya</url>
     </scm>
+    <issueManagement>
+        <system>GitHub issues</system>
+        <url>https://github.com/vivid-inc/cherimoya/issues</url>
+    </issueManagement>
     <inceptionYear>2017</inceptionYear>
     <licenses>
         <license>
@@ -83,6 +87,19 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>3.1.12.2</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <groupId>com.googlecode.l10n-maven-plugin</groupId>
                     <artifactId>l10n-maven-plugin</artifactId>
                     <version>1.8</version>
@@ -111,9 +128,9 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>3.0</version>
                     <configuration>
-                        <header>APACHE-2-template.txt</header>
+                        <header>assets/license/APACHE-2-template.txt</header>
                         <headerDefinitions>
-                            <headerDefinition>license-maven-plugin-javadoc.xml</headerDefinition>
+                            <headerDefinition>assets/license/license-maven-plugin-javadoc.xml</headerDefinition>
                         </headerDefinitions>
                         <properties>
                             <owner>The Cherimoya Authors</owner>
@@ -145,7 +162,8 @@
                     <version>3.8.1</version>
                     <configuration>
                         <compilerArgs>
-                            <arg>-Xlint:all</arg>
+                            <!-- Silence warnings of this type: "[WARNING] No processor claimed any of these annotations: ..." -->
+                            <arg>-Xlint:all,-processing</arg>
                         </compilerArgs>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
@@ -162,6 +180,31 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                    <executions>
+                        <execution>
+                            <id>enforce</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banDuplicatePomDependencyVersions/>
+                                    <requireJavaVersion>
+                                        <version>${jdk.version}</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>${maven.version}</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
                 </plugin>
@@ -174,7 +217,7 @@
                     <configuration>
                         <archive>
                             <manifestEntries>
-                                <Built-By>vivid</Built-By><!-- TODO Move this to developer's personal settings -->
+                                <Built-By>vivid</Built-By>
                             </manifestEntries>
                         </archive>
                     </configuration>
@@ -208,6 +251,11 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
             </plugin>
 
         </plugins>

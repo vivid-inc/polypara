@@ -8,8 +8,6 @@ import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import vivid.cherimoya.maven.Static;
-import vivid.cherimoya.maven.VerifyConstantsMojo;
 
 import java.io.File;
 

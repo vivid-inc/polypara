@@ -8,6 +8,7 @@ Automated verification of Java field value constancy across release versions.
 
 For when you look at a constant field in Java and think to yourself: "The value of this field *must not change*, even in successive versions."
 Appropriate for values that are exposed to and relied upon by software outside of your realm of concern or with whom you have a standing promise to keep keywords stable, such as API clients and database values.
+Its intentionalist approach enhances your pull-request code reviews and build log reviews.
 
 Cherimoya is comprised of a feather-weight Java annotation and a Maven plugin that optionally breaks the build in cases of violations.
 Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3.3+.
@@ -15,7 +16,7 @@ Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3
 
 ## Using Cherimoya in your project
 
-The distributable JAR comprising the `@Constant` annotation is lightweight, retained in Java class files but not during runtime. Add a dependency to Cherimoya in your Maven POM:
+In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library containing the `@Constant` annotation:
 
 ```xml
 <dependency>
@@ -33,14 +34,15 @@ In your Java code, annotate the appropriate fields with the `@Constant` annotati
 static final int PaymentProcessingTimeoutSecs = 30;
 ```
 
+The annotation itself is retained in Java class files but not during runtime.
 Cherimoya depends on the field value's `equals` method for determining constancy between versions.
 
 Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`.
 List each version of your project in the order they were released.
-The order of appearance is important because it sets the sequential progression of release version names; this is how error messages are produced.
+The order of appearance is important because it sets the sequential progression of release version; the ordering directly affects how field value changes are detected and reported.
 
 The current project's version (from its GAV in the POM) is automatically appended to the end of this list.
-Alternatively, it can be added to the version list to control ordering of versions.
+Alternatively, it can be explicitly added to the version list to control ordering of versions.
 
 ```xml
 <build>
@@ -69,7 +71,7 @@ Alternatively, it can be added to the version list to control ordering of versio
 </build>
 ```
 
-Run the build to confirm whether your `@Constant` values are indeed constant over the set of releases.
+Run the build to confirm whether your `@Constant` field values are indeed constant over the set of releases.
 
 ```bash
 $ mvn install
@@ -83,6 +85,15 @@ $ mvn install
 ...
 ```
 
+__Break the build__ by keeping the `reportingLevel` configuration parameter set to the default of `ERROR`.
+This behavior can be demoted to a warning that doesn't break the build by setting it to a `WARNING` instead:
+
+```xml
+               <configuration>
+                   ...
+                   <reportingLevel>WARNING</reportingLevel>
+               </configuration>
+```
 
 __Skip execution__ by setting the `cherimoya.skip` property to `true` within plugin's `configuration`:
 ```xml
@@ -92,32 +103,32 @@ __Skip execution__ by setting the `cherimoya.skip` property to `true` within plu
 ```
 
 
-## Hacking
+## Development
 
 Run Maven to run the tests and build the deliverables:
 ```bash
 mvn clean package
 ```
 
-
-## Links
-
-- [Motivating question on StackOverflow](https://stackoverflow.com/questions/41393794/good-practices-for-breaking-maven-build-when-specific-class-members-change-val)
+#### Roadmap
+- Support for refactoring of a `@Constant` field's FQN and type.
+- Optionally check field visibility and other modifiers (public, static, final, etc.)
 
 
 ## TODO
 
-- Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
-- Cherimoya applies to a single artifact version. When the next version of the product in which Cherimoya is readying for release, write code to identify all available versions of the artifact in Maven's local repositories, scan those as well, and then verify constancy. Create tests and usage documentation.
-- Bake motivation, principles, and design decisions into the documentation and the code.
-- Ensure that Maven can access all indicated versions
-- Ignores the absolute value of and changes to field visibility and other modifiers modifiers (public, package, protected, private, static, final, etc.). Optionally check these.
-- The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant.
+Document:
+- Cherimoya applies to a single artifact version.
+- The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant. If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
 - The impact that using Cherimoya has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
+- Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
+- Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
+
+Do:
+- Bake motivation, principles, and design decisions into the documentation and the code.
+- Ensure that Maven can access all indicated versions.
 - Publish to JCenter. Maven Central won't accept our Maven G:A because we don't control the "vivid" TLD.
 - Set up a build on CI, integrate with SonarQube.
-- Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
-- If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
 
 
 © Copyright Vivid Inc.

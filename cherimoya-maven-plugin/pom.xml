@@ -143,6 +143,11 @@
             </plugin>
 
             <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
                 <groupId>com.googlecode.l10n-maven-plugin</groupId>
                 <artifactId>l10n-maven-plugin</artifactId>
             </plugin>
