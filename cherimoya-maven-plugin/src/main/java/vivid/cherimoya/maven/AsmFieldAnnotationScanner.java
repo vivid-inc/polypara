@@ -23,6 +23,9 @@ import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 
+/**
+ * Scans ASM class structures for a specific field annotation, recording identified fields into an accumulator.
+ */
 class AsmFieldAnnotationScanner extends AsmClassVisitorAdapter<List<Tuple2<String, Object>>> {
 
     private final ArrayList<Tuple2<String, Object>> accumulator;

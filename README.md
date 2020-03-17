@@ -20,10 +20,10 @@ In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library con
 
 ```xml
 <dependency>
-  <groupId>vivid.cherimoya</groupId>
-  <artifactId>cherimoya</artifactId>
-  <version>1.0</version>
-  <scope>compile</scope>
+    <groupId>vivid.cherimoya</groupId>
+    <artifactId>cherimoya</artifactId>
+    <version>1.0</version>
+    <scope>compile</scope>
 </dependency>
 ```
 
@@ -46,28 +46,28 @@ Alternatively, it can be explicitly added to the version list to control orderin
 
 ```xml
 <build>
-   ...
-   <plugin>
-       <groupId>vivid.cherimoya</groupId>
-       <artifactId>cherimoya-maven-plugin</artifactId>
-       <version>1.0</version>
-       <executions>
-           <execution>
-               <goals>
-                   <goal>verify</goal>
-               </goals>
-               <configuration>
-                   <versions>
-                       <version>0.2</version>
-                       <version>0.2.1</version>
-                       ...
-                       <version>2.6.5</version>
-                   </versions>
-               </configuration>
-           </execution>
-       </executions>
-   </plugin>
-   ...
+    ...
+    <plugin>
+        <groupId>vivid.cherimoya</groupId>
+        <artifactId>cherimoya-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>verify</goal>
+                </goals>
+                <configuration>
+                    <versions>
+                        <version>0.2</version>
+                        <version>0.2.1</version>
+                        ...
+                        <version>2.6.5</version>
+                    </versions>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    ...
 </build>
 ```
 
@@ -85,21 +85,26 @@ $ mvn install
 ...
 ```
 
-__Break the build__ by keeping the `reportingLevel` configuration parameter set to the default of `ERROR`.
-This behavior can be demoted to a warning that doesn't break the build by setting the parameter to `WARNING` instead:
+__Don't break the build__ by changing the `reportingLevel` configuration parameter from its default of `ERROR` to a `WARNING` instead:
 
-```xml
-               <configuration>
-                   ...
-                   <reportingLevel>WARNING</reportingLevel>
-               </configuration>
-```
-
-__Skip execution__ by setting the `cherimoya.skip` property to `true` within plugin's `configuration`:
 ```xml
 <configuration>
-    <cherimoya.skip>true</cherimoya.skip>
+    <reportingLevel>WARNING</reportingLevel>
 </configuration>
+```
+
+__Skip execution__ by setting the `skip` configuration property to `true` within plugin's `configuration`:
+
+```xml
+<configuration>
+    <skip>true</skip>
+</configuration>
+```
+
+or by defining the `cherimoya.skip` system property to `mvn` at the CLI:
+
+```bash
+mvn ... -Dcherimoya.skip ...
 ```
 
 
@@ -107,14 +112,10 @@ __Skip execution__ by setting the `cherimoya.skip` property to `true` within plu
 ## Development
 
 Run the tests and build the deliverables:
+
 ```bash
 bin/test.sh
 ```
-
-#### Roadmap
-
-- Support the refactoring of a `@Constant` field's FQN or type.
-- Optionally check field type, visibility, and other modifiers.
 
 
 
@@ -128,6 +129,9 @@ Document:
 - Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
 
 Do:
+- Code cleanup
+- Tests
+- Support the refactoring of a `@Constant` field's FQN or type.
 - Bake motivation, principles, and design decisions into the documentation and the code.
 - Ensure that Maven can access all indicated versions.
 - Publish to JCenter. Maven Central won't accept our Maven G:A because we don't control the "vivid" TLD.

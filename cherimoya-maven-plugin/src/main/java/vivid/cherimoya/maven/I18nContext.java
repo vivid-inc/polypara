@@ -18,9 +18,6 @@ import org.codehaus.plexus.i18n.I18N;
 
 import java.util.Locale;
 
-/**
- * @since 1.0
- */
 class I18nContext {
 
     private static final String I18N_RESOURCE_BUNDLE = "cherimoya-i18n";

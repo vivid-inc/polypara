@@ -25,19 +25,22 @@ import org.objectweb.asm.ClassReader;
 
 import java.io.File;
 
-class ArtifactResolution {
+/**
+ * Resolve Maven artifacts by version.
+ */
+class MavenArtifactResolution {
 
-    private ArtifactResolution() {
+    private MavenArtifactResolution() {
         // Hide the public constructor
     }
 
-    static Map<String, java.util.List<ClassReader>> mapVersionsToClassLoaders(
+    static Map<String, java.util.List<ClassReader>> mapVersionsToClassReaders(
             final Mojo mojo,
             final List<String> resolvableVersions
     ) {
         return resolvableVersions.toMap(
                 v -> v,
-                v -> classLoaderForResolvableVersion(
+                v -> classReaderForResolvableVersion(
                         mojo,
                         mojo.getMavenProject().getGroupId(),
                         mojo.getMavenProject().getArtifactId(),
@@ -54,7 +57,7 @@ class ArtifactResolution {
                 );
     }
 
-    private static java.util.List<ClassReader> classLoaderForResolvableVersion(
+    private static java.util.List<ClassReader> classReaderForResolvableVersion(
             final Mojo mojo,
             final String groupId,
             final String artifactId,

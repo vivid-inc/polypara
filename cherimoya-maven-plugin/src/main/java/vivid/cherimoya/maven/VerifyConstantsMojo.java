@@ -38,9 +38,12 @@ import vivid.cherimoya.annotation.Constant;
 )
 public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
 
+    private I18nContext i18nContext;
+
+
 
     //
-    // Mojo configuration
+    // Maven execution environment configuration
     //
 
     @Component
@@ -70,6 +73,12 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
     @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
     private java.util.List<RemoteRepository> remoteRepositories;
 
+
+
+    //
+    // User-provided configuration
+    //
+
     /**
      * Expect these artifact versions to be available Process artifacts of these versions.
      * An error will be generated if a given artifact version is not available in the local repository.
@@ -91,14 +100,17 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
         WARNING,
         ERROR
     }
+
+    /**
+     * @since 1.0
+     */
     @Parameter(property = Static.POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY, defaultValue = "ERROR")
     private ReportingLevel reportingLevel;
 
-    private I18nContext i18nContext;
 
 
     //
-    // Mojo getters of execution context
+    // Provide access to this Mojo's execution context
     //
 
     @Override
@@ -131,6 +143,11 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
         return repositorySystemSession;
     }
 
+
+
+    //
+    // Mojo logic
+    //
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         i18nContext = new I18nContext(i18n);
@@ -199,7 +216,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
             // it in the local repository beforehand.
             // All versions under consideration are thus processed, both implied (the project)
             // and explicit (configured in the plugin section in the POM).
-            ArtifactResolution.mapVersionsToClassLoaders(this, resolvableVersions)
+            MavenArtifactResolution.mapVersionsToClassReaders(this, resolvableVersions)
 
                     // Given a mapping from version strings to Jar file paths, scan each of
                     // the Java class files within the Jars, looking for fields annotated
@@ -228,7 +245,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
 
             // In the event of violations, report them and fail the build:
             //
-            Report.report(this, violations);
+            MavenLogReporting.report(this, violations);
             if (!violations.isEmpty() && reportingLevel == ReportingLevel.ERROR) {
                 throw new MojoFailureException(
                         i18nContext.getText(
@@ -241,7 +258,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
         } catch (final MojoFailureException e) {
             throw e;
         } catch (final Exception e) {
-            throw CE1InternalError.newMojoExEx(
+            throw CE1InternalError.asNewMojoExecutionException(
                     this,
                     "Unexpected exception",
                     e

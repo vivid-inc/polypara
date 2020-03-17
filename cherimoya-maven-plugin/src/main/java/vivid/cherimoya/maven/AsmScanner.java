@@ -19,8 +19,6 @@ import org.objectweb.asm.ClassReader;
 
 /**
  * Uses ASM to scan a list of classes that have already been read in as {@code ClassReader}s.
- *
- * @since 1.0
  */
 class AsmScanner {
 

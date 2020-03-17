@@ -16,13 +16,16 @@ package vivid.cherimoya.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+/**
+ * @since 1.0
+ */
 class CE1InternalError {
 
     private CE1InternalError() {
         // Hide the public constructor
     }
 
-    static MojoExecutionException newMojoExEx(
+    static MojoExecutionException asNewMojoExecutionException(
             final Mojo mojo,
             final String message
     ) {
@@ -34,7 +37,7 @@ class CE1InternalError {
         );
     }
 
-    static MojoExecutionException newMojoExEx(
+    static MojoExecutionException asNewMojoExecutionException(
             final Mojo mojo,
             final String message,
             final Exception ex

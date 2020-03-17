@@ -80,9 +80,9 @@ class AsmClassReaders {
             return Option.of(new ClassReader(bytes));
         } catch (final IOException e) {
             throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-4-class-read-failure",
-                            path
+                    CE4ClassReadFailure.asMessage(
+                            mojo,
+                            path.toString()
                     ),
                     e
             );
@@ -123,9 +123,9 @@ class AsmClassReaders {
             );
         } catch (final IOException e) {
             throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-4-class-read-failure",
-                            jarFile
+                    CE4ClassReadFailure.asMessage(
+                            mojo,
+                            jarFile.toString()
                     ),
                     e
             );
@@ -159,8 +159,8 @@ class AsmClassReaders {
                     .toJavaList();
         } catch (final IOException e) {
             throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                    CE4ClassReadFailure.asMessage(
+                            mojo,
                             file.getAbsolutePath()
                     ),
                     e
@@ -191,8 +191,8 @@ class AsmClassReaders {
                     .toJavaList();
         } catch (final IOException e) {
             throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-4-class-read-failure",
+                    CE4ClassReadFailure.asMessage(
+                            mojo,
                             file.getAbsolutePath()
                     ),
                     e

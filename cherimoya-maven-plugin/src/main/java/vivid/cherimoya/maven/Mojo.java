@@ -22,6 +22,9 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 import java.util.List;
 
+/**
+ * Provide sub-system access to the Mojo's execution context.
+ */
 interface Mojo {
 
     I18nContext getI18nContext();

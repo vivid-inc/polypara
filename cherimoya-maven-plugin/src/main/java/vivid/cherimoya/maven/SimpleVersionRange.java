@@ -19,6 +19,9 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.Objects;
 
+/**
+ * Simplistic encoding of a version range with a {@code start} version and an optional {@code end} version.
+ */
 class SimpleVersionRange implements Comparable<SimpleVersionRange> {
 
     final String start;

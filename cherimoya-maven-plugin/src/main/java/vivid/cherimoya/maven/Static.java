@@ -44,9 +44,11 @@ class Static {
     @Constant(rationale = CONSTANT_REASON)
     static final String POM_CHERIMOYA_VERSIONS_CONFIGURATION_KEY = "versions";
 
+
     private Static() {
         // Cannot be instantiated.
     }
+
 
     /**
      * From https://stackoverflow.com/questions/33242577/how-do-i-turn-a-java-enumeration-into-a-stream

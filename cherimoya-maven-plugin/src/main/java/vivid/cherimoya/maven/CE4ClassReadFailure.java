@@ -14,24 +14,23 @@
 
 package vivid.cherimoya.maven;
 
-import io.vavr.Tuple2;
-import io.vavr.collection.List;
-import io.vavr.control.Option;
-
 /**
- * Record of one occurrence of a {@code Constant} value constancy violation.
+ * @since 1.0
  */
-class ConstancyViolation {
+class CE4ClassReadFailure {
 
-    final String fieldName;
-    final List<Tuple2<SimpleVersionRange, Option<Object>>> fieldValueByVersionRange;
+    private CE4ClassReadFailure() {
+        // Hide the public constructor
+    }
 
-    ConstancyViolation(
-            final String fieldName,
-            final List<Tuple2<SimpleVersionRange, Option<Object>>> fieldValueByVersionRange
+    static String asMessage(
+            final Mojo mojo,
+            final String path
     ) {
-        this.fieldName = fieldName;
-        this.fieldValueByVersionRange = fieldValueByVersionRange;
+        return mojo.getI18nContext().getText(
+                "vivid.cherimoya.error.ce-4-class-read-failure",
+                path
+        );
     }
 
 }

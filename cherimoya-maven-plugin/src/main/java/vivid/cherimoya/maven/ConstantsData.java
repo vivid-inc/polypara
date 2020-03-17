@@ -19,6 +19,10 @@ import io.vavr.collection.List;
 
 import java.io.Closeable;
 
+/**
+ * Persistence tier contract for the storage of {@code Constant} field information and the computation of
+ * detailed value constancy violations.
+ */
 interface ConstantsData
         extends Closeable {
 

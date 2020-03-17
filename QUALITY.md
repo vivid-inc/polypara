@@ -58,6 +58,7 @@ A VCS commit is considered releasable provided that all of its components satisf
 #### Executing the release
 - Send each component to JCenter.
 - In Git, tag the release and push the tag to GitHub.
+- In GitHub, set the release and package.
 
 #### Immediately after release
 - Smoke test each downloadable deliverable.

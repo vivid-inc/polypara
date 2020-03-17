@@ -40,6 +40,7 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Manages {@code Constant}-related data in a graph database.
@@ -322,25 +323,12 @@ class ConstantsGraphImpl
                 final SortedMap<SimpleVersionRange, Option<Object>> valueByVersion = Stream
                         .ofAll(fieldInstances)
                         .foldLeft(version2value, noteFieldInstanceValue)
-                        .map((ver, val) -> new Tuple2<>(new SimpleVersionRange(ver, Option.none()), val))
-                        .dropWhile(undefVal) // TODO also remove tail elements similarly
-                        ;
-                if (valueByVersion.isEmpty()) {
-                    throw new SneakyMojoException(
-                            CE1InternalError.newMojoExEx(
-                                    mojo,
-                                    String.format(
-                                            "Field %s cannot be devoid of values over all versions",
-                                            fullyQualifiedFieldName
-                                    )
-                            )
-                    );
-                }
+                        .map((ver, val) -> new Tuple2<>(new SimpleVersionRange(ver, Option.none()), val));
 
                 final BiFunction<SortedMap<SimpleVersionRange, Option<Object>>,
                         Tuple2<SimpleVersionRange, Option<Object>>,
                         SortedMap<SimpleVersionRange, Option<Object>>>
-                        collapseAdjacentEqualValues =
+                        collapseAdjacentEntriesOfEqualValue =
                         (v2v, cur) -> {
                             final Tuple2<SimpleVersionRange, Option<Object>> prev = v2v.last();
                             if (prev._2.equals(cur._2)) {
@@ -354,11 +342,35 @@ class ConstantsGraphImpl
                             }
                         };
 
-                SortedMap<SimpleVersionRange, Option<Object>> x = valueByVersion.drop(1)
-                        .foldLeft(valueByVersion.take(1), collapseAdjacentEqualValues);
+                final SortedMap<SimpleVersionRange, Option<Object>> roughHistory =
+                        valueByVersion
+                                .drop(1)
+                                .foldLeft(valueByVersion.take(1), collapseAdjacentEntriesOfEqualValue);
 
-                if (x.length() >= 2) {
-                    final ConstancyViolation cv = new ConstancyViolation(fullyQualifiedFieldName, x.toList());
+                final UnaryOperator<SortedMap<SimpleVersionRange, Option<Object>>> trimUndefValEnds =
+                        hist -> {
+                            final SortedMap<SimpleVersionRange, Option<Object>> histHead = undefVal.test(roughHistory.take(1).get()) ? hist.drop(1) : hist;
+                            return undefVal.test(histHead.takeRight(1).get()) ? histHead.dropRight(1) : histHead;
+                        };
+
+                final SortedMap<SimpleVersionRange, Option<Object>> fineHistory =
+                        trimUndefValEnds.apply(roughHistory);
+
+                if (fineHistory.isEmpty()) {
+                    throw new SneakyMojoException(
+                            CE1InternalError.asNewMojoExecutionException(
+                                    mojo,
+                                    String.format(
+                                            "Field %s was recorded as being subject to @Constant constraints " +
+                                                    "but was calculated as not being defined in any version",
+                                            fullyQualifiedFieldName
+                                    )
+                            )
+                    );
+                }
+                // When fineHistory.length() == 1, the field value is constant throughout its recorded range.
+                else if (fineHistory.length() >= 2) {
+                    final ConstancyViolation cv = new ConstancyViolation(fullyQualifiedFieldName, fineHistory.toList());
                     violations.add(cv);
                 }
 

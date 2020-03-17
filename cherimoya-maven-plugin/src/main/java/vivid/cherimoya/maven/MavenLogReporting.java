@@ -19,11 +19,11 @@ import io.vavr.control.Option;
 
 import java.util.function.Consumer;
 
-class Report {
+class MavenLogReporting {
 
     private static final int ABBREVIATED_VALUE_LENGTH_STRING_FORMAT = 80;
 
-    private Report() {
+    private MavenLogReporting() {
         // Hide the public constructor
     }
 
@@ -61,7 +61,7 @@ class Report {
                 .max();
         if (versionRangeColumnWidth.isEmpty()) {
             throw new SneakyMojoException(
-                    CE1InternalError.newMojoExEx(
+                    CE1InternalError.asNewMojoExecutionException(
                             mojo,
                             "Could not calculate the width of the version range column"
                     )
@@ -114,7 +114,7 @@ class Report {
             return mojo.getLog()::warn;
         } else {
             throw new SneakyMojoException(
-                    CE1InternalError.newMojoExEx(
+                    CE1InternalError.asNewMojoExecutionException(
                             mojo,
                             String.format(
                                     "Unexpected ReportingLevel value: %s",
