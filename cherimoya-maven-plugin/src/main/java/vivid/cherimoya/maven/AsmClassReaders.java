@@ -29,30 +29,12 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static vivid.cherimoya.maven.JavaClasses.hasJavaClassFileMagic;
+
 class AsmClassReaders {
-
-    private static String JAVA_CLASS_FILENAME_SUFFIX = ".class";
-
-    private static String JAVA_CLASS_FILE_MAGIC_HEADER = "cafebabe";
 
     private AsmClassReaders() {
         // Hide the public constructor
-    }
-
-    private static boolean isJavaClassFilename(
-            final String filename
-    ) {
-        return filename.endsWith(JAVA_CLASS_FILENAME_SUFFIX);
-    }
-
-    private static boolean hasJavaClassFileMagic(
-            final byte[] inputStreamBytes
-    ) {
-        final String magic = String.format(
-                "%02X%02X%02X%02X",
-                inputStreamBytes[0], inputStreamBytes[1], inputStreamBytes[2], inputStreamBytes[3]
-        );
-        return JAVA_CLASS_FILE_MAGIC_HEADER.equalsIgnoreCase(magic);
     }
 
     private static Option<ClassReader> classReaderOf(
@@ -60,7 +42,7 @@ class AsmClassReaders {
             final Path path
     ) {
         try {
-            if (!isJavaClassFilename(path.toString())) {
+            if (!JavaClasses.isJavaClassFilename(path.toString())) {
                 mojo.getLog().debug(
                         "Ignoring re Java class file name extension: " +
                                 path
@@ -95,7 +77,7 @@ class AsmClassReaders {
             final JarFile jarFile,
             final JarEntry jarEntry
     ) {
-        if (!isJavaClassFilename(jarEntry.getName())) {
+        if (!JavaClasses.isJavaClassFilename(jarEntry.getName())) {
             mojo.getLog().debug(
                     "Ignoring re Java class file name extension: " +
                             Static.pathInJarFile(file, jarEntry.getName())

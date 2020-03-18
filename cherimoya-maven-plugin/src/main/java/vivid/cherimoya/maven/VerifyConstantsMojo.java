@@ -194,7 +194,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
                 "vivid.cherimoya.action.verifying-constants",
                 allVersions.size(),
                 Static.mavenGAOf(mavenProject),
-                Static.listOfVersions(allVersions)
+                Static.humanReadableVersionList(allVersions)
         ));
 
 

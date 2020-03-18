@@ -31,6 +31,8 @@ class SimpleVersionRange implements Comparable<SimpleVersionRange> {
             final String start,
             final Option<String> end
     ) {
+        Objects.requireNonNull(start, "start is null");
+        Objects.requireNonNull(end, "end is null");
         this.start = start;
         this.end = end;
     }

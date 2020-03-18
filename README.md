@@ -85,6 +85,13 @@ $ mvn install
 ...
 ```
 
+__Leave record of the reason__ for marking a field `@Constant` using the annotation's `rationale` parameter:
+
+```java
+@Constant(rationale = "TODO")
+public String blargh = "qix";
+```
+
 __Don't break the build__ by changing the `reportingLevel` configuration parameter from its default of `ERROR` to a `WARNING` instead:
 
 ```xml
@@ -93,7 +100,7 @@ __Don't break the build__ by changing the `reportingLevel` configuration paramet
 </configuration>
 ```
 
-__Skip execution__ by setting the `skip` configuration property to `true` within plugin's `configuration`:
+__Skip execution__ by setting the `skip` configuration property to `true` within the plugin's `configuration`:
 
 ```xml
 <configuration>
@@ -101,7 +108,7 @@ __Skip execution__ by setting the `skip` configuration property to `true` within
 </configuration>
 ```
 
-or by defining the `cherimoya.skip` system property to `mvn` at the CLI:
+or by defining the `cherimoya.skip` system property as an argument to `mvn` at the CLI:
 
 ```bash
 mvn ... -Dcherimoya.skip ...

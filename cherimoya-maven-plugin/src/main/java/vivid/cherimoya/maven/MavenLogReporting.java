@@ -27,18 +27,6 @@ class MavenLogReporting {
         // Hide the public constructor
     }
 
-    private static String objectValueAsAbbreviatedString(
-            final Object obj
-    ) {
-        final String str = String.valueOf(obj);
-        return str.length() < ABBREVIATED_VALUE_LENGTH_STRING_FORMAT ?
-                str :
-                String.format(
-                        "%s ...",
-                        str.substring(0, ABBREVIATED_VALUE_LENGTH_STRING_FORMAT)
-                );
-    }
-
     static void report(
             final Mojo mojo,
             final List<ConstancyViolation> constancyViolations
@@ -95,7 +83,10 @@ class MavenLogReporting {
             return mojo.getI18nContext().getText(
                     "vivid.cherimoya.report.field-value-constancy-violation-field-value",
                     versionDescription,
-                    objectValueAsAbbreviatedString(fieldValue.get())
+                    Static.objectValueAsAbbreviatedString(
+                            fieldValue.get(),
+                            ABBREVIATED_VALUE_LENGTH_STRING_FORMAT
+                    )
             );
         } else {
             return mojo.getI18nContext().getText(

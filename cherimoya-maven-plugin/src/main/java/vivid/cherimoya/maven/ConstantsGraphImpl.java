@@ -184,7 +184,7 @@ class ConstantsGraphImpl
 
             mojo.getLog().debug(
                     "Creating graph nodes for versions:  " +
-                            Static.listOfVersions(versions)
+                            Static.humanReadableVersionList(versions)
             );
             versions
                     .zip(versionOrder)

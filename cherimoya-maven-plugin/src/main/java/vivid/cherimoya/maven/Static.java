@@ -21,6 +21,7 @@ import vivid.cherimoya.annotation.Constant;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
@@ -30,7 +31,7 @@ class Static {
 
     private static final String CONSTANT_REASON =
             "Users prefer their existing Maven POM Cherimoya configuration to " +
-            "remain compatible as-is with newer versions of this plugin.";
+                    "remain compatible as-is with newer versions of this Cherimoya Maven plugin.";
 
     @Constant(rationale = CONSTANT_REASON)
     static final String POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY = "reportingLevel";
@@ -82,6 +83,8 @@ class Static {
             final String clazzName,
             final String fieldName
     ) {
+        Objects.requireNonNull(clazzName, "clazzName is null");
+        Objects.requireNonNull(fieldName, "fieldName is null");
         return String.format(
                 "%s.%s",
                 clazzName,
@@ -89,12 +92,10 @@ class Static {
         );
     }
 
-    /**
-     * @return human-readable string representation of a set of version strings
-     */
-    static String listOfVersions(
+    static String humanReadableVersionList(
             final List<String> versions
     ) {
+        Objects.requireNonNull(versions, "versions is null");
         return Stream.ofAll(versions)
                 .intersperse("  ")
                 .fold("", String::concat);
@@ -106,6 +107,7 @@ class Static {
     static String mavenGAOf(
             final MavenProject mavenProject
     ) {
+        Objects.requireNonNull(mavenProject, "mavenProject is null");
         return String.format(
                 "%s:%s",
                 mavenProject.getModel().getGroupId(),
@@ -121,6 +123,9 @@ class Static {
             final String artifactId,
             final String version
     ) {
+        Objects.requireNonNull(groupId, "groupId is null");
+        Objects.requireNonNull(artifactId, "artifactId is null");
+        Objects.requireNonNull(version, "version is null");
         return String.format(
                 "%s:%s:%s",
                 groupId,
@@ -129,13 +134,34 @@ class Static {
         );
     }
 
+    private static final String ABBREVIATION_SUFFIX = "...";
+
+    static String objectValueAsAbbreviatedString(
+            final Object obj,
+            final int maximumStringLength
+    ) {
+        final String str = String.valueOf(obj);
+        if (str.length() <= Math.max(ABBREVIATION_SUFFIX.length(), maximumStringLength)) {
+            return str;
+        }
+
+        return String.format(
+                "%s%s",
+                str.substring(0, maximumStringLength - ABBREVIATION_SUFFIX.length()),
+                ABBREVIATION_SUFFIX
+        );
+    }
+
     /**
-     * @return absolute path of a Java Jar file and a specific entry within it
+     * @return absolute path of a Java Jar file and a specific entry \
+     *   within it in the same format produced by maven-compiler-plugin
      */
     static String pathInJarFile(
             final File jarFile,
             final String entryName
     ) {
+        Objects.requireNonNull(jarFile, "jarFile is null");
+        Objects.requireNonNull(entryName, "entryName is null");
         return String.format(
                 "%s(%s)",
                 jarFile.getAbsolutePath(),
