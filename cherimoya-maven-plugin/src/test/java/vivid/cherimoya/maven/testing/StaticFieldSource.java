@@ -14,6 +14,7 @@
 
 package vivid.cherimoya.maven.testing;
 
+import io.vavr.Value;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -42,8 +43,9 @@ class StaticFieldArgumentsProvider
         return extensionContext.getTestClass()
                 .map(this::getField)
                 .map(this::getValue)
+                .map(Value::toJavaStream)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Could not get value of field: " + fieldName));
+                        new IllegalArgumentException("Could not obtain Arguments from value of field: " + fieldName));
     }
 
     @Override
@@ -64,7 +66,7 @@ class StaticFieldArgumentsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private Stream<Arguments> getValue(
+    private Value<Arguments> getValue(
             final Field field
     ) {
         Object value = null;
@@ -72,7 +74,7 @@ class StaticFieldArgumentsProvider
             value = field.get(null);
         } catch (final Exception ignored) {}
 
-        return value == null ? null : (Stream<Arguments>) value;
+        return value == null ? null : (Value<Arguments>) value;
     }
 
 }

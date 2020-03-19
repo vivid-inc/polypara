@@ -14,19 +14,18 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FieldFullyQualifiedNameTest {
 
-    public static final Stream<Arguments> nullParameters =
-            Stream.of(
+    public static final List<Arguments> nullParameters =
+            List.of(
                     Arguments.of(null, "abc"),
                     Arguments.of("abc", null)
             );
@@ -43,8 +42,8 @@ public class FieldFullyQualifiedNameTest {
         );
     }
 
-    public static final Stream<Arguments> parameters =
-            Stream.of(
+    public static final List<Arguments> parameters =
+            List.of(
                     Arguments.of("", "abc", ".abc"),
                     Arguments.of("abc", "", "abc."),
                     Arguments.of("org.oss.Classy", "nicety", "org.oss.Classy.nicety")

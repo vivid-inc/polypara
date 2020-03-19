@@ -14,13 +14,12 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.List;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,8 +49,8 @@ public class MavenGAVFormattingTest {
         );
     }
 
-    public static final Stream<Arguments> nullParameters =
-            Stream.of(
+    public static final List<Arguments> nullParameters =
+            List.of(
                     Arguments.of(null, "xyz", "1.2.3"),
                     Arguments.of("a.b.c", null, "1.2.3"),
                     Arguments.of("a.b.c", "xyz", null)

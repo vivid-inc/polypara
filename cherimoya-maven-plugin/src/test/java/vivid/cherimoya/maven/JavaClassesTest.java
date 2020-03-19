@@ -14,20 +14,19 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaClassesTest {
 
-    public static final Stream<Arguments> filenames =
-            Stream.of(
+    public static final List<Arguments> filenames =
+            List.of(
                     Arguments.of("", false),
                     Arguments.of(".clas", false),
                     Arguments.of(".class", true),
@@ -53,8 +52,8 @@ public class JavaClassesTest {
         );
     }
 
-    public static final Stream<Arguments> classFileBytes =
-            Stream.of(
+    public static final List<Arguments> classFileBytes =
+            List.of(
                     Arguments.of(new byte[] {}, false),
 
                     Arguments.of(new byte[] {(byte)0x12}, false),

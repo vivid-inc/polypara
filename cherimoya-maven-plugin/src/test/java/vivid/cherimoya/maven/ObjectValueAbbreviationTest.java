@@ -14,18 +14,17 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ObjectValueAbbreviationTest {
 
-    public static final Stream<Arguments> objects =
-            Stream.of(
+    public static final List<Arguments> objects =
+            List.of(
                     // Instances of null
                     Arguments.of(null, 20, "null"),
 

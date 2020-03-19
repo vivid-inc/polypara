@@ -48,14 +48,15 @@ class SimpleVersionRange implements Comparable<SimpleVersionRange> {
 
     @Override
     public int compareTo(final SimpleVersionRange o) {
-        return new DefaultArtifactVersion(this.start).compareTo(new DefaultArtifactVersion(o.start));
+        return new DefaultArtifactVersion(this.start)
+                .compareTo(new DefaultArtifactVersion(o.start));
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleVersionRange that = (SimpleVersionRange) o;
+        final SimpleVersionRange that = (SimpleVersionRange) o;
         return start.equals(that.start) &&
                 end.equals(that.end);
     }

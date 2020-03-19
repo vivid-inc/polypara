@@ -20,8 +20,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
 
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,8 +33,8 @@ public class HumanReadableListOfVersionsTest {
         );
     }
 
-    public static final Stream<Arguments> versions =
-            Stream.of(
+    public static final List<Arguments> versions =
+            List.of(
                     Arguments.of(List.empty(), ""),
                     Arguments.of(List.of("1"), "1"),
                     Arguments.of(List.of("1", "2"), "1  2"),

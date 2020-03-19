@@ -19,33 +19,56 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import vivid.cherimoya.maven.testing.Algorithms;
 import vivid.cherimoya.maven.testing.StaticFieldSource;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleVersionRangeTest {
 
-    private static final List<Arguments> versions =
+    public static final List<Arguments> nullParameters =
             List.of(
-                    Arguments.of("1.0", Option.none(), "1.0"),
-                    Arguments.of("1.2.3", Option.of("4.5.6-alpha-7"), "1.2.3 ~ 4.5.6-alpha-7"),
-                    Arguments.of("1.3", Option.none(), "1.3"),
-                    Arguments.of("2.0-alpha-1", Option.none(), "2.0-alpha-1"),
-                    Arguments.of("2.0-beta-3", Option.none(), "2.0-beta-3"),
-                    Arguments.of("2.0-rc4", Option.none(), "2.0-rc4"),
-                    Arguments.of("2.0", Option.none(), "2.0"),
-                    Arguments.of("2.0.1-rc-1", Option.none(), "2.0.1-rc-1"),
-                    Arguments.of("2.0.1", Option.none(), "2.0.1"),
-                    Arguments.of("2.1.0", Option.none(), "2.1.0")
+                    Arguments.of(null, Option.none()),
+                    Arguments.of("1", null)
             );
-    public static final Stream<Arguments> versionsStream = versions.toJavaStream();
 
     @ParameterizedTest
-    @StaticFieldSource("versionsStream")
+    @StaticFieldSource("nullParameters")
+    void nullParameters(
+            final String start,
+            final Option<String> end
+    ) {
+        assertThrows(
+                NullPointerException.class,
+                () -> new SimpleVersionRange(start, end)
+        );
+    }
+
+    /**
+     * Requirements: Versions are listed in ascending order. No two entries are equal.
+     */
+    public static final List<Arguments> versions =
+            List.of(
+                    Arguments.of("0",           Option.none(),              "0"),
+                    Arguments.of("1.0",         Option.none(),              "1.0"),
+                    Arguments.of("1.2.3",       Option.of("4.5.6-alpha-7"), "1.2.3 ~ 4.5.6-alpha-7"),
+                    Arguments.of("1.3",         Option.none(),              "1.3"),
+                    Arguments.of("2.0-alpha-1", Option.none(),              "2.0-alpha-1"),
+                    Arguments.of("2.0-beta-3",  Option.none(),              "2.0-beta-3"),
+                    Arguments.of("2.0-rc4",     Option.none(),              "2.0-rc4"),
+                    Arguments.of("2.0",         Option.none(),              "2.0"),
+                    Arguments.of("2.0.1-rc-1",  Option.none(),              "2.0.1-rc-1"),
+                    Arguments.of("2.0.1",       Option.none(),              "2.0.1"),
+                    Arguments.of("2.1.0",       Option.none(),              "2.1.0")
+            );
+
+    @ParameterizedTest
+    @StaticFieldSource("versions")
     void stringRepresentation(
             final String start,
             final Option<String> end,
@@ -61,41 +84,57 @@ public class SimpleVersionRangeTest {
         );
     }
 
-    /**
-     * @return a list of pairs in geometric progression over the list of elements,
-     *   meaning no pair._1 appears later in the source list than pair._2
-     */
-    private static <T, U> List<Tuple2<U, U>> pairwise(List<T> list, Function<T, U> factory) {
-        T first = list.get(0);
-        List<T> rest = list.drop(1);
-        if (rest.isEmpty()) {
-            return List.empty();
-        }
-
-        return rest
-                // Generate pairs of (first, each remaining element in list)
-                .map(x -> new Tuple2<U, U>(factory.apply(first), factory.apply(x)))
-
-                // Recurse down the list
-                .appendAll(pairwise(rest, factory));
-    }
-
-    public static final List<Arguments> versionPairs = pairwise(
-            List.ofAll(versions).map(a -> (String) a.get()[0]),
+    public static final List<Arguments> versionsPairwise = Algorithms.forwardPairwise(
+            versions.map(args -> (String) args.get()[0]),
             v -> new SimpleVersionRange(v, Option.none())
     )
             .map(e -> Arguments.of(e._1, e._2));
 
-    public static final Stream<Arguments> versionsPairwise = versionPairs.toJavaStream();
-
     @ParameterizedTest
     @StaticFieldSource("versionsPairwise")
-    void comparator(
+    void compareEarlier(
             final SimpleVersionRange earlier,
             final SimpleVersionRange later
     ) {
         assertTrue(
                 earlier.compareTo(later) < 0
+        );
+    }
+
+    @ParameterizedTest
+    @StaticFieldSource("versionsPairwise")
+    void compareLater(
+            final SimpleVersionRange earlier,
+            final SimpleVersionRange later
+    ) {
+        assertTrue(
+                later.compareTo(earlier) > 0
+        );
+    }
+
+    static final BiFunction<Tuple2<SimpleVersionRange, Integer>, Tuple2<SimpleVersionRange, Integer>, Arguments> eqPair =
+            (a, b) -> Arguments.of(a._1, b._1, (int) a._2 == b._2);
+    static final Function<List<Tuple2<SimpleVersionRange, Integer>>, List<Arguments>> eqPairOfVersionCombinations =
+            list ->
+                    list.flatMap(j ->
+                            list.map(k -> eqPair.apply(j, k))
+                    );
+    public final static List<Arguments> versionCombinations = versions
+            .map(args -> (String) args.get()[0])
+            .map(v -> new SimpleVersionRange(v, Option.none()))
+            .zipWithIndex()
+            .transform(eqPairOfVersionCombinations);
+
+    @ParameterizedTest
+    @StaticFieldSource("versionCombinations")
+    void equality(
+            final SimpleVersionRange a,
+            final SimpleVersionRange b,
+            final boolean expectedEqual
+    ) {
+        assertEquals(
+                expectedEqual,
+                a.equals(b)
         );
     }
 
