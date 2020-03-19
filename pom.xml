@@ -22,7 +22,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>vivid.cherimoya</groupId>
-    <artifactId>vivid-cherimoya</artifactId>
+    <artifactId>cherimoya-parent</artifactId>
 
     <version>0.2.0</version>
     <packaging>pom</packaging>
@@ -32,17 +32,26 @@
         <url>https://vivid-inc.net</url>
     </organization>
 
-    <name>Vivid Cherimoya Parent</name>
-    <description>Parent for Vivid Cherimoya artifacts</description>
+    <name>Cherimoya Parent</name>
+    <description>Parent POM of Vivid Cherimoya artifacts</description>
+    <inceptionYear>2017</inceptionYear>
     <url>https://github.com/vivid-inc/cherimoya</url>
-    <scm>
-        <url>https://github.com/vivid-inc/cherimoya</url>
-    </scm>
+
+    <ciManagement>
+        <system>CircleCI</system>
+        <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
+    </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>bintray-vivid-vivid</id>
+            <name>vivid-vivid</name>
+            <url>https://api.bintray.com/maven/vivid/vivid/vivid.cherimoya/;publish=1</url>
+        </repository>
+    </distributionManagement>
     <issueManagement>
         <system>GitHub issues</system>
         <url>https://github.com/vivid-inc/cherimoya/issues</url>
     </issueManagement>
-    <inceptionYear>2017</inceptionYear>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -51,10 +60,9 @@
             <comments>Copyright (c) 2017 Vivid Inc.</comments>
         </license>
     </licenses>
-    <ciManagement>
-        <system>CircleCI</system>
-        <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
-    </ciManagement>
+    <scm>
+        <url>https://github.com/vivid-inc/cherimoya</url>
+    </scm>
 
     <modules>
         <module>cherimoya</module>
@@ -298,7 +306,7 @@
                             <property>cherimoya.basedir</property>
                             <project>
                                 <groupId>vivid.cherimoya</groupId>
-                                <artifactId>vivid-cherimoya</artifactId>
+                                <artifactId>cherimoya-parent</artifactId>
                             </project>
                         </configuration>
                     </execution>
