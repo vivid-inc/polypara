@@ -305,4 +305,15 @@
 
     </build>
 
+    <profiles>
+        <profile>
+            <id>sonarcloud</id>
+            <properties>
+                <sonar.projectKey>vivid-inc_cherimoya</sonar.projectKey>
+                <sonar.organization>vivid</sonar.organization>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>

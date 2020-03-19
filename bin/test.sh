@@ -11,4 +11,4 @@ export TZ=UTC
 find . -name target -type d -exec rm -r {} +
 
 # Run all tests, create the deliverables
-mvn clean install
+mvn clean install $@
