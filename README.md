@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
 [![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
+[![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.2.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
 
 Automated verification of Java field value constancy across release versions.
 
@@ -85,11 +86,11 @@ $ mvn install
 ...
 ```
 
-__Leave record of the reason__ for marking a field `@Constant` using the annotation's `rationale` parameter:
+__Record the rationale__ for marking a field `@Constant` using the annotation's `rationale` parameter:
 
 ```java
-@Constant(rationale = "TODO")
-public String blargh = "qix";
+@Constant(rationale = "Customers have already deployed production code that relies on this key")
+public String CRITICAL_API_PROPERTY_KEY = "listings";
 ```
 
 __Don't break the build__ by changing the `reportingLevel` configuration parameter from its default of `ERROR` to a `WARNING` instead:
@@ -139,7 +140,6 @@ Do:
 - Improve test coverage.
 - Support the refactoring of a `@Constant` field's FQN or type.
 - Bake motivation, principles, and design decisions into the documentation and the code.
-- Ensure that Maven can access all indicated versions.
 
 
 © Copyright Vivid Inc.
