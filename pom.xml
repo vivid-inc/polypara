@@ -322,7 +322,7 @@
             <id>sonarcloud</id>
             <properties>
                 <sonar.projectKey>vivid-inc_cherimoya</sonar.projectKey>
-                <sonar.moduleKey>${artifactId}</sonar.moduleKey>
+                <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
                 <sonar.organization>vivid</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
             </properties>

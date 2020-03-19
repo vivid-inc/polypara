@@ -1,7 +1,7 @@
 # Vivid Cherimoya
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
-[![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
+[![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid.cherimoya)
 [![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.2.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
 [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_cherimoya&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_cherimoya)
 
@@ -18,6 +18,8 @@ Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3
 
 
 ## Using Cherimoya in your project
+
+Ensure that Maven can resolve artifacts through [JCenter](https://www.jfrog.com/confluence/display/BT/Maven+Repositories) from `<url>https://dl.bintray.com/vivid/vivid</url>`.
 
 In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library containing the `@Constant` annotation:
 
