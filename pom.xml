@@ -33,7 +33,7 @@
     </organization>
 
     <name>Vivid Cherimoya Parent</name>
-    <description>Toolkit for software quality automation.</description>
+    <description>Parent for Vivid Cherimoya artifacts</description>
     <url>https://github.com/vivid-inc/cherimoya</url>
     <scm>
         <url>https://github.com/vivid-inc/cherimoya</url>
@@ -51,6 +51,10 @@
             <comments>Copyright (c) 2017 Vivid Inc.</comments>
         </license>
     </licenses>
+    <ciManagement>
+        <system>CircleCI</system>
+        <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
+    </ciManagement>
 
     <modules>
         <module>cherimoya</module>
@@ -310,6 +314,7 @@
             <id>sonarcloud</id>
             <properties>
                 <sonar.projectKey>vivid-inc_cherimoya</sonar.projectKey>
+                <sonar.moduleKey>${artifactId}</sonar.moduleKey>
                 <sonar.organization>vivid</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
             </properties>
