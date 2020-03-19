@@ -18,9 +18,9 @@ import java.util.Objects;
 
 class JavaClasses {
 
-    private static String JAVA_CLASS_FILENAME_SUFFIX = ".class";
+    private static final String JAVA_CLASS_FILENAME_SUFFIX = ".class";
 
-    private static String JAVA_CLASS_FILE_MAGIC_HEADER = "cafebabe";
+    private static final String JAVA_CLASS_FILE_MAGIC_HEADER = "cafebabe";
 
     private JavaClasses() {
         // Hide the public constructor

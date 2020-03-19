@@ -3,6 +3,8 @@
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
 [![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
 [![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.2.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
+[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_cherimoya&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_cherimoya)
+
 
 Automated verification of Java field value constancy across release versions.
 
