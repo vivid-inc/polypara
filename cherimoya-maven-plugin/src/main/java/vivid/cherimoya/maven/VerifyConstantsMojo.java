@@ -30,7 +30,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import vivid.cherimoya.annotation.Constant;
 
 /**
- * @since 1.0
+ * @since 0.2.0
  */
 @org.apache.maven.plugins.annotations.Mojo(
         name = Static.POM_CHERIMOYA_VERIFY_MOJO_NAME,
@@ -83,7 +83,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
      * Expect these artifact versions to be available Process artifacts of these versions.
      * An error will be generated if a given artifact version is not available in the local repository.
      *
-     * @since 1.0
+     * @since 0.2.0
      */
     @Parameter(alias = Static.POM_CHERIMOYA_VERSIONS_CONFIGURATION_KEY)
     private java.util.List<String> specifiedVersions;
@@ -91,7 +91,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
     /**
      * Flag to easily skip execution.
      *
-     * @since 1.0
+     * @since 0.2.0
      */
     @Parameter(property = Static.POM_CHERIMOYA_SKIP_PROPERTY_KEY, defaultValue = "false")
     private boolean skip;
@@ -102,7 +102,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
     }
 
     /**
-     * @since 1.0
+     * @since 0.2.0
      */
     @Parameter(property = Static.POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY, defaultValue = "ERROR")
     private ReportingLevel reportingLevel;

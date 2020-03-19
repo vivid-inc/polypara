@@ -24,7 +24,7 @@
     <parent>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>vivid-cherimoya</artifactId>
-        <version>1.0</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>cherimoya-maven-plugin</artifactId>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>vivid.cherimoya</groupId>
             <artifactId>cherimoya</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
 

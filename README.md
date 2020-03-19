@@ -1,7 +1,7 @@
 # Vivid Cherimoya
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
-[![Current version](https://img.shields.io/badge/JCenter-v1.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
+[![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid%3Acherimoya)
 
 Automated verification of Java field value constancy across release versions.
 
@@ -50,7 +50,7 @@ Alternatively, it can be explicitly added to the version list to control orderin
     <plugin>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>cherimoya-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>0.2.0</version>
         <executions>
             <execution>
                 <goals>
@@ -76,7 +76,7 @@ Run the build to confirm whether your `@Constant` field values are indeed consta
 ```bash
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:1.0:verify (default) @ spyra-levorg ---
+[INFO] --- cherimoya-maven-plugin:0.2.0:verify (default) @ spyra-levorg ---
 [INFO] Verifying constancy of @Constant field values in 17 versions of com.spyra:levorg  0.2  0.2.1  ...
 [INFO]
 [ERROR] @Constant field value violation:  com.spyra.levorg.internal.db.PaymentProcessingTimeoutSecs
@@ -136,13 +136,10 @@ Document:
 - Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
 
 Do:
-- Code cleanup
-- Tests
+- Improve test coverage.
 - Support the refactoring of a `@Constant` field's FQN or type.
 - Bake motivation, principles, and design decisions into the documentation and the code.
 - Ensure that Maven can access all indicated versions.
-- Publish to JCenter. Maven Central won't accept our Maven G:A because we don't control the "vivid" TLD.
-- Set up a build on CI, integrate with SonarQube.
 
 
 © Copyright Vivid Inc.

@@ -15,7 +15,7 @@
 package vivid.cherimoya.maven;
 
 /**
- * @since 1.0
+ * @since 0.2.0
  */
 class CE4ClassReadFailure {
 

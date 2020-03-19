@@ -17,7 +17,7 @@ package vivid.cherimoya.maven;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * @since 1.0
+ * @since 0.2.0
  */
 class CE1InternalError {
 
