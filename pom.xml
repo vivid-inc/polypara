@@ -128,9 +128,9 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>3.0</version>
                     <configuration>
-                        <header>assets/license/APACHE-2-template.txt</header>
+                        <header>${cherimoya.basedir}/assets/license/APACHE-2-template.txt</header>
                         <headerDefinitions>
-                            <headerDefinition>assets/license/license-maven-plugin-javadoc.xml</headerDefinition>
+                            <headerDefinition>${cherimoya.basedir}/assets/license/license-maven-plugin-javadoc.xml</headerDefinition>
                         </headerDefinitions>
                         <properties>
                             <owner>The Cherimoya Authors</owner>
@@ -277,6 +277,28 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.3.1</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>directory-of</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>cherimoya.basedir</property>
+                            <project>
+                                <groupId>vivid.cherimoya</groupId>
+                                <artifactId>vivid-cherimoya</artifactId>
+                            </project>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
