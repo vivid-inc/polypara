@@ -1,8 +1,8 @@
 # Vivid Cherimoya
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
-[![Current version](https://img.shields.io/badge/JCenter-v0.2.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid.cherimoya)
-[![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.2.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
+[![Current version](https://img.shields.io/badge/JCenter-v0.3.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid.cherimoya)
+[![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.3.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
 [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_cherimoya&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_cherimoya)
 
 
@@ -27,7 +27,7 @@ In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library con
 <dependency>
     <groupId>vivid.cherimoya</groupId>
     <artifactId>cherimoya</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -55,7 +55,7 @@ Alternatively, it can be explicitly added to the version list to control orderin
     <plugin>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>cherimoya-maven-plugin</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0</version>
         <executions>
             <execution>
                 <goals>
@@ -81,7 +81,7 @@ Run the build to confirm whether your `@Constant` field values are indeed consta
 ```bash
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:0.2.0:verify (default) @ spyra-levorg ---
+[INFO] --- cherimoya-maven-plugin:0.3.0:verify (default) @ spyra-levorg ---
 [INFO] Verifying constancy of @Constant field values in 17 versions of com.spyra:levorg  0.2  0.2.1  ...
 [INFO]
 [ERROR] @Constant field value violation:  com.spyra.levorg.internal.db.PaymentProcessingTimeoutSecs

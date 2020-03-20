@@ -67,6 +67,7 @@
     <modules>
         <module>cherimoya</module>
         <module>cherimoya-maven-plugin</module>
+        <module>cherimoya-junit5</module>
     </modules>
 
     <properties>
