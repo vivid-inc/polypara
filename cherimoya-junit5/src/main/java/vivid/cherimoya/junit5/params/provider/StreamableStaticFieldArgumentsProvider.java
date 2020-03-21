@@ -12,29 +12,30 @@
  * the License.
  */
 
-package vivid.cherimoya.maven.testing;
+package vivid.cherimoya.junit5.params.provider;
 
-import io.vavr.Value;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
-/*
- * Referencing https://www.baeldung.com/parameterized-tests-junit-5
- */
-class StaticFieldArgumentsProvider
-        implements ArgumentsProvider, AnnotationConsumer<StaticFieldSource> {
+class StreamableStaticFieldArgumentsProvider
+        implements ArgumentsProvider, AnnotationConsumer<StreamableStaticFieldSource> {
 
     private String fieldName;
+
+    @Override
+    public void accept(
+            final StreamableStaticFieldSource variableSource
+    ) {
+        fieldName = variableSource.value();
+    }
+
 
     @Override
     public Stream<? extends Arguments> provideArguments(
@@ -42,17 +43,10 @@ class StaticFieldArgumentsProvider
     ) {
         return extensionContext.getTestClass()
                 .map(this::getField)
-                .map(this::getValue)
-                .map(Value::toJavaStream)
+                .map(this::getFieldValue)
+                .map(this::toStream)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Could not obtain Arguments from value of field: " + fieldName));
-    }
-
-    @Override
-    public void accept(
-            final StaticFieldSource variableSource
-    ) {
-        fieldName = variableSource.value();
+                        new IllegalArgumentException("Could not obtain stream of Arguments from value of field: " + fieldName));
     }
 
     private Field getField(
@@ -65,28 +59,33 @@ class StaticFieldArgumentsProvider
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Value<Arguments> getValue(
+    private Object getFieldValue(
             final Field field
     ) {
-        Object value = null;
         try {
-            value = field.get(null);
-        } catch (final Exception ignored) {}
-
-        return value == null ? null : (Value<Arguments>) value;
+            return field.get(null);
+        } catch (final Exception ignored) {
+            return null;
+        }
     }
 
-}
+    @SuppressWarnings("unchecked")
+    private Stream<Arguments> toStream(
+            final Object val
+    ) {
+        try {
+            final Method javaM = val.getClass().getMethod("stream");
+            return (Stream<Arguments>) javaM.invoke(val);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+        }
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@ArgumentsSource(StaticFieldArgumentsProvider.class)
-public @interface StaticFieldSource {
+        try {
+            final Method vavrM = val.getClass().getMethod("toJavaStream");
+            return (Stream<Arguments>) vavrM.invoke(val);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+        }
 
-    /*
-     * Name of the field from whose value arguments are sourced.
-     */
-    String value();
+        return null;
+    }
 
 }

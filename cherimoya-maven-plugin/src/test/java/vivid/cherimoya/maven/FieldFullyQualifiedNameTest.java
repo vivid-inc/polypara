@@ -17,7 +17,7 @@ package vivid.cherimoya.maven;
 import io.vavr.collection.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.maven.testing.StaticFieldSource;
+import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +31,7 @@ public class FieldFullyQualifiedNameTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("nullParameters")
+    @StreamableStaticFieldSource("nullParameters")
     void nullParameters(
             final String clazzName,
             final String fieldName
@@ -50,7 +50,7 @@ public class FieldFullyQualifiedNameTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("parameters")
+    @StreamableStaticFieldSource("parameters")
     void variousParameters(
             final String clazzName,
             final String fieldName,

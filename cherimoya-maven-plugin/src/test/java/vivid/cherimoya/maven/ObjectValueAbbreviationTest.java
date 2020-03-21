@@ -17,7 +17,7 @@ package vivid.cherimoya.maven;
 import io.vavr.collection.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.maven.testing.StaticFieldSource;
+import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,7 +64,7 @@ public class ObjectValueAbbreviationTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("objects")
+    @StreamableStaticFieldSource("objects")
     void abbreviation(
             final Object obj,
             final int length,

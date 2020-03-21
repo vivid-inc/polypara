@@ -18,7 +18,7 @@ import io.vavr.collection.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.maven.testing.StaticFieldSource;
+import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,7 +41,7 @@ public class JavaClassesTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("filenames")
+    @StreamableStaticFieldSource("filenames")
     void classFileName(
             final String filename,
             final boolean expected
@@ -70,7 +70,7 @@ public class JavaClassesTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("classFileBytes")
+    @StreamableStaticFieldSource("classFileBytes")
     void classFileBytes(
             final byte[] inputStreamBytes,
             final boolean expected

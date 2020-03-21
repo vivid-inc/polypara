@@ -19,8 +19,8 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
 import vivid.cherimoya.maven.testing.Algorithms;
-import vivid.cherimoya.maven.testing.StaticFieldSource;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -38,7 +38,7 @@ public class SimpleVersionRangeTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("nullParameters")
+    @StreamableStaticFieldSource("nullParameters")
     void nullParameters(
             final String start,
             final Option<String> end
@@ -68,7 +68,7 @@ public class SimpleVersionRangeTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("versions")
+    @StreamableStaticFieldSource("versions")
     void stringRepresentation(
             final String start,
             final Option<String> end,
@@ -91,7 +91,7 @@ public class SimpleVersionRangeTest {
             .map(e -> Arguments.of(e._1, e._2));
 
     @ParameterizedTest
-    @StaticFieldSource("versionsPairwise")
+    @StreamableStaticFieldSource("versionsPairwise")
     void compareEarlier(
             final SimpleVersionRange earlier,
             final SimpleVersionRange later
@@ -102,7 +102,7 @@ public class SimpleVersionRangeTest {
     }
 
     @ParameterizedTest
-    @StaticFieldSource("versionsPairwise")
+    @StreamableStaticFieldSource("versionsPairwise")
     void compareLater(
             final SimpleVersionRange earlier,
             final SimpleVersionRange later
@@ -126,7 +126,7 @@ public class SimpleVersionRangeTest {
             .transform(eqPairOfVersionCombinations);
 
     @ParameterizedTest
-    @StaticFieldSource("versionCombinations")
+    @StreamableStaticFieldSource("versionCombinations")
     void equality(
             final SimpleVersionRange a,
             final SimpleVersionRange b,

@@ -18,7 +18,7 @@ import io.vavr.collection.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.maven.testing.StaticFieldSource;
+import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +42,7 @@ public class HumanReadableListOfVersionsTest {
             );
 
     @ParameterizedTest
-    @StaticFieldSource("versions")
+    @StreamableStaticFieldSource("versions")
     void variousParameters(
             final List<String> versions,
             final String expected
