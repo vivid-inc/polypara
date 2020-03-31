@@ -43,9 +43,9 @@
     </ciManagement>
     <distributionManagement>
         <repository>
-            <id>bintray-vivid-vivid</id>
-            <name>vivid-vivid</name>
-            <url>https://api.bintray.com/maven/vivid/vivid/vivid.cherimoya/;publish=1</url>
+            <id>clojars.org</id>
+            <name>Clojars</name>
+            <url>https://repo.clojars.org/</url>
         </repository>
     </distributionManagement>
     <issueManagement>
