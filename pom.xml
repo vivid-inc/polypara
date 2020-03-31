@@ -21,9 +21,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>vivid.cherimoya</groupId>
     <artifactId>cherimoya-parent</artifactId>
-
     <version>0.3.0</version>
     <packaging>pom</packaging>
 
@@ -43,9 +43,9 @@
     </ciManagement>
     <distributionManagement>
         <repository>
-            <id>bintray-vivid-vivid</id>
-            <name>vivid-vivid</name>
-            <url>https://api.bintray.com/maven/vivid/vivid/vivid.cherimoya/;publish=1</url>
+            <id>clojars.org</id>
+            <name>Clojars</name>
+            <url>https://repo.clojars.org/</url>
         </repository>
     </distributionManagement>
     <issueManagement>
@@ -170,7 +170,6 @@
                 </plugin>
 
                 <plugin>
-                    <!-- Configure the Maven compiler plugin in projects that inherit from this one. -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>

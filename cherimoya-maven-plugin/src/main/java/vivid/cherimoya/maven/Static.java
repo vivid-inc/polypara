@@ -29,20 +29,20 @@ import java.util.stream.StreamSupport;
 
 class Static {
 
-    private static final String CONSTANT_REASON =
+    private static final String DONT_MAKE_ME_THINK =
             "Users prefer their existing Maven POM Cherimoya configuration to " +
                     "remain compatible as-is with newer versions of this Cherimoya Maven plugin.";
 
-    @Constant(rationale = CONSTANT_REASON)
+    @Constant(rationale = DONT_MAKE_ME_THINK)
     static final String POM_CHERIMOYA_REPORTING_LEVEL_CONFIGURATION_KEY = "reportingLevel";
 
-    @Constant(rationale = CONSTANT_REASON)
+    @Constant(rationale = DONT_MAKE_ME_THINK)
     static final String POM_CHERIMOYA_SKIP_PROPERTY_KEY = "cherimoya.skip";
 
-    @Constant(rationale = CONSTANT_REASON)
+    @Constant(rationale = DONT_MAKE_ME_THINK)
     static final String POM_CHERIMOYA_VERIFY_MOJO_NAME = "verify";
 
-    @Constant(rationale = CONSTANT_REASON)
+    @Constant(rationale = DONT_MAKE_ME_THINK)
     static final String POM_CHERIMOYA_VERSIONS_CONFIGURATION_KEY = "versions";
 
 

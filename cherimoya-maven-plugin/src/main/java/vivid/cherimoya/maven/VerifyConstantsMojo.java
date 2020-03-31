@@ -58,19 +58,19 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
     /**
      * The current repository/network configuration of Maven.
      */
-    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
+    @Parameter(readonly = true, property = "repositorySystemSession")
     private RepositorySystemSession repositorySystemSession;
 
     /**
      * The Maven Project Object
      */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    @Parameter(readonly = true, required = true, property = "project")
     private MavenProject mavenProject;
 
     /**
      * The project's remote repositories to use for the resolution.
      */
-    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
+    @Parameter(readonly = true, property = "project.remoteProjectRepositories")
     private java.util.List<RemoteRepository> remoteRepositories;
 
 
