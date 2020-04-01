@@ -43,7 +43,7 @@
     </ciManagement>
     <distributionManagement>
         <repository>
-            <id>clojars.org</id>
+            <id>clojars</id>
             <url>https://repo.clojars.org/</url>
         </repository>
     </distributionManagement>
