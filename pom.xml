@@ -37,6 +37,7 @@
     <inceptionYear>2017</inceptionYear>
     <url>https://github.com/vivid-inc/cherimoya</url>
 
+    <!-- TODO These may need to be duplicated throughout all children POMs -->
     <ciManagement>
         <system>CircleCI</system>
         <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
