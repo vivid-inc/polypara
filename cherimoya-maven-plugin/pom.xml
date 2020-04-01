@@ -20,7 +20,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-v4.0.0.xsd">
 
-<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>vivid.cherimoya</groupId>
         <artifactId>cherimoya-parent</artifactId>
@@ -30,8 +30,41 @@
     <artifactId>cherimoya-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
+    <organization>
+        <name>Vivid Inc.</name>
+        <url>https://vivid-inc.net</url>
+    </organization>
+
     <name>Cherimoya Maven Plugin</name>
     <description>Vivid Cherimoya Maven plugin</description>
+    <inceptionYear>2017</inceptionYear>
+    <url>https://github.com/vivid-inc/cherimoya</url>
+
+    <ciManagement>
+        <system>CircleCI</system>
+        <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
+    </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>clojars</id>
+            <url>https://repo.clojars.org/</url>
+        </repository>
+    </distributionManagement>
+    <issueManagement>
+        <system>GitHub issues</system>
+        <url>https://github.com/vivid-inc/cherimoya/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>Copyright (c) 2017 Vivid Inc.</comments>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/vivid-inc/cherimoya</url>
+    </scm>
 
     <prerequisites>
         <maven>${maven.version}</maven>
@@ -89,15 +122,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.plugin-tools</groupId>
-            <artifactId>maven-plugin-annotations</artifactId>
-            <version>${maven.plugin.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${maven.plugin.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -114,26 +147,21 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
             <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.6.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
-            <plugin>
-                <groupId>com.github.manouti</groupId>
-                <artifactId>jar-timestamp-normalize-maven-plugin</artifactId>
-            </plugin>
 
             <plugin>
                 <groupId>com.github.spotbugs</groupId>

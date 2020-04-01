@@ -1,7 +1,7 @@
 # Vivid Cherimoya
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
-[![Current version](https://img.shields.io/badge/JCenter-v0.3.0-239922.svg?style=flat-square)](https://bintray.com/vivid/vivid/vivid.cherimoya)
+[![Current version](https://img.shields.io/clojars/v/vivid.cherimoya/cherimoya-maven-plugin?color=blue&style=flat-square)](https://clojars.org/search?q=vivid.cherimoya)
 [![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.3.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
 [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_cherimoya&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_cherimoya)
 
@@ -19,7 +19,13 @@ Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3
 
 ## Using Cherimoya in your project
 
-Ensure that Maven can resolve artifacts through [JCenter](https://www.jfrog.com/confluence/display/BT/Maven+Repositories) from `<url>https://dl.bintray.com/vivid/vivid</url>`.
+First, ensure that Maven can resolve artifacts through [Clojars](https://clojars.org/) for dependency and Maven plugin resolution with this snippet:
+```xml
+<repository>
+    <id>clojars.org</id>
+    <url>https://repo.clojars.org/</url>
+</repository>
+```
 
 In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library containing the `@Constant` annotation:
 
@@ -137,8 +143,7 @@ Document:
 - Cherimoya applies to a single artifact version.
 - The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant. If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
 - The impact that using Cherimoya has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
-- Expect results after two different versions are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
-- Document instructions for incorporating (including fetching the JARs of) and using both the annotation JAR and the Maven plugin. Specify when the annotation should be used. Ensure that the JCenter Maven repository is included in your Maven configuration.
+- Expect results after two different versions of your project are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
 
 Do:
 - Improve test coverage.
