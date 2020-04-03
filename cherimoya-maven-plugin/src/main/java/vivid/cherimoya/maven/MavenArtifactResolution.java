@@ -17,7 +17,6 @@ package vivid.cherimoya.maven;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
-import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -37,16 +36,16 @@ class MavenArtifactResolution {
         // Hide the public constructor
     }
 
-    static Either<Message, Map<String, Stream<ClassReader>>> mapVersionsToClassReaders(
+    static Either<Message, Map<String, List<ClassReader>>> mapVersionsToClassReaders(
             final Mojo mojo,
             final List<String> resolvableVersions
     ) {
-        final Either<Message, Stream<ClassReader>> currentVersionClassReaders =
+        final Either<Message, List<ClassReader>> currentVersionClassReaders =
                 AsmClassReaders.fromFile(
                         mojo,
                         new File( mojo.getMavenProject().getBuild().getOutputDirectory() )
                 );
-        final Either<Message, Map<String, Stream<ClassReader>>> mapping =
+        final Either<Message, Map<String, List<ClassReader>>> mapping =
                 currentVersionClassReaders.map(val ->
                         HashMap.of(
                                 mojo.getMavenProject().getVersion(),
@@ -61,7 +60,7 @@ class MavenArtifactResolution {
                             if (mapping.isLeft()) {
                                 return mapping;
                             }
-                            final Either<Message, Stream<ClassReader>> ret = classReaderForResolvableVersion(
+                            final Either<Message, List<ClassReader>> ret = classReaderForResolvableVersion(
                                     mojo,
                                     mojo.getMavenProject().getGroupId(),
                                     mojo.getMavenProject().getArtifactId(),
@@ -81,7 +80,7 @@ class MavenArtifactResolution {
                 );
     }
 
-    private static Either<Message, Stream<ClassReader>> classReaderForResolvableVersion(
+    private static Either<Message, List<ClassReader>> classReaderForResolvableVersion(
             final Mojo mojo,
             final String groupId,
             final String artifactId,

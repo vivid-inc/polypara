@@ -220,7 +220,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
             // it in the local repository beforehand.
             // All versions under consideration are thus processed, both implied (the project)
             // and explicit (configured in the plugin section in the POM).
-            final Either<Message, Map<String, Stream<ClassReader>>> mapping =
+            final Either<Message, Map<String, List<ClassReader>>> mapping =
                     MavenArtifactResolution.mapVersionsToClassReaders(this, resolvableVersions);
             if (mapping.isLeft()) {
                 final Message message = mapping.getLeft();

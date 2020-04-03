@@ -14,7 +14,7 @@
 
 package vivid.cherimoya.maven;
 
-import io.vavr.collection.Stream;
+import io.vavr.collection.List;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import org.apache.commons.compress.utils.IOUtils;
@@ -115,11 +115,11 @@ class AsmClassReaders {
         }
     }
 
-    private static Either<Message, Stream<JarEntry>> streamOfJarEntries(
+    private static Either<Message, List<JarEntry>> streamOfJarEntries(
             final JarFile jarFile
     ) {
         return Either.right(
-                Stream.ofAll(
+                List.ofAll(
                         Static.enumerationAsStream(
                                 jarFile.entries()
                         )
@@ -127,7 +127,7 @@ class AsmClassReaders {
         );
     }
 
-    static Either<Message, Stream<ClassReader>> fromJarFile(
+    static Either<Message, List<ClassReader>> fromJarFile(
             final Mojo mojo,
             final File file
     ) {
@@ -152,11 +152,11 @@ class AsmClassReaders {
         }
     }
 
-    private static Either<Message, Stream<Path>> streamOfPaths(
+    private static Either<Message, List<Path>> streamOfPaths(
             final File file
     ) {
         try {
-            return Either.right( Stream.ofAll(
+            return Either.right( List.ofAll(
                     Files.walk(file.toPath())
                             .filter(Files::isRegularFile)));
         } catch (final IOException e) {
@@ -169,7 +169,7 @@ class AsmClassReaders {
         }
     }
 
-    static Either<Message, Stream<ClassReader>> fromFile(
+    static Either<Message, List<ClassReader>> fromFile(
             final Mojo mojo,
             final File file
     ) {
