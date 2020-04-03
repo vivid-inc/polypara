@@ -29,6 +29,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 @SuppressWarnings("serial")
 class SneakyMojoException extends RuntimeException {
 
+    // TODO Eliminate this
+
     SneakyMojoException(final String message, final Throwable cause) { super(message, cause); }
     SneakyMojoException(final Throwable cause) { super(cause.getMessage(), cause); }
 

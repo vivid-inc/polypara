@@ -19,6 +19,7 @@ import io.vavr.collection.List;
 import io.vavr.collection.SortedMap;
 import io.vavr.collection.Stream;
 import io.vavr.control.Option;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -358,13 +359,14 @@ class ConstantsGraphImpl
 
                 if (fineHistory.isEmpty()) {
                     throw new SneakyMojoException(
-                            CE1InternalError.asNewMojoExecutionException(
-                                    mojo,
-                                    String.format(
-                                            "Field %s was recorded as being subject to @Constant constraints " +
-                                                    "but was calculated as not being defined in any version",
-                                            fullyQualifiedFieldName
-                                    )
+                            new MojoExecutionException(
+                                    CE1InternalError.message(
+                                            String.format(
+                                                    "Field %s was recorded as being subject to @Constant constraints " +
+                                                            "but was calculated as not being defined in any version",
+                                                    fullyQualifiedFieldName
+                                            ))
+                                            .render(mojo)
                             )
                     );
                 }

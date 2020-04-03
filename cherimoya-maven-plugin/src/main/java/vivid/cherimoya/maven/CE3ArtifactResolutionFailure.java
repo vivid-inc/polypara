@@ -17,39 +17,30 @@ package vivid.cherimoya.maven;
 import io.vavr.control.Option;
 
 /**
- * @since 0.2.0
+ * @since 0.3.0
  */
-class CE1InternalError implements Message {
+public class CE3ArtifactResolutionFailure implements Message {
 
-    private static final String I18N_KEY = "vivid.cherimoya.error.ce-1-internal-error";
+    private static final String I18N_KEY = "vivid.cherimoya.error.ce-3-artifact-resolution-failure";
 
     private final Option<Exception> cause;
-    private final String message;
+    private final String gav;
 
-    private CE1InternalError(
+    private CE3ArtifactResolutionFailure(
             final Option<Exception> cause,
-            final String message
+            final String gav
     ) {
         this.cause = cause;
-        this.message = message;
+        this.gav = gav;
     }
 
     static Message message(
-            final String message
+            final String gav,
+            final Exception e
     ) {
-        return new CE1InternalError(
-                Option.none(),
-                message
-        );
-    }
-
-    static Message message(
-            final String message,
-            final Exception cause
-    ) {
-        return new CE1InternalError(
-                Option.of(cause),
-                message
+        return new CE3ArtifactResolutionFailure(
+                Option.of(e),
+                gav
         );
     }
 
@@ -64,7 +55,7 @@ class CE1InternalError implements Message {
     ) {
         return mojo.getI18nContext().getText(
                 I18N_KEY,
-                message
+                gav
         );
     }
 

@@ -16,6 +16,7 @@ package vivid.cherimoya.maven;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
+import org.apache.maven.plugin.MojoExecutionException;
 
 import java.util.function.Consumer;
 
@@ -49,10 +50,11 @@ class MavenLogReporting {
                 .max();
         if (versionRangeColumnWidth.isEmpty()) {
             throw new SneakyMojoException(
-                    CE1InternalError.asNewMojoExecutionException(
-                            mojo,
-                            "Could not calculate the width of the version range column"
-                    )
+                    new MojoExecutionException(
+                            CE1InternalError.message(
+                                    "Could not calculate the width of the version range column"
+                            )
+                                    .render(mojo))
             );
         }
 
@@ -105,12 +107,14 @@ class MavenLogReporting {
             return mojo.getLog()::warn;
         } else {
             throw new SneakyMojoException(
-                    CE1InternalError.asNewMojoExecutionException(
-                            mojo,
-                            String.format(
-                                    "Unexpected ReportingLevel value: %s",
-                                    mojo.getReportingLevel()
+                    new MojoExecutionException(
+                            CE1InternalError.message(
+                                    String.format(
+                                            "Unexpected ReportingLevel value: %s",
+                                            mojo.getReportingLevel()
+                                    )
                             )
+                                    .render(mojo)
                     )
             );
         }

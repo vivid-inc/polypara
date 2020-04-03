@@ -6,7 +6,7 @@ set -x
 export TZ=UTC
 
 # Aim for a clean build
-find . -name target -type d -exec rm -r {} +
+find . -depth -name target -type d -exec rm -r {} +
 
 # Deploy signed artifacts
 # The GPG signing key ID needs to be the first parameter to this script

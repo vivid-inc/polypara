@@ -14,21 +14,49 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.control.Option;
+
 /**
  * @since 0.2.0
  */
-class CE4ClassReadFailure {
+class CE4ClassReadFailure implements Message {
 
-    private CE4ClassReadFailure() {
-        // Hide the public constructor
+    private static final String I18N_KEY = "vivid.cherimoya.error.ce-4-class-read-failure";
+
+    private final Option<Exception> cause;
+    private final String path;
+
+    private CE4ClassReadFailure(
+            final String path,
+            final Option<Exception> cause
+    ) {
+        this.path = path;
+        this.cause = cause;
     }
 
-    static String asMessage(
-            final Mojo mojo,
+    static Message message(
             final String path
     ) {
+        return new CE4ClassReadFailure(path, Option.none());
+    }
+
+    static Message message(
+            final String path,
+            final Exception cause
+    ) {
+        return new CE4ClassReadFailure(path, Option.of(cause));
+    }
+
+    @Override
+    public Option<Exception> getCause() {
+        return cause;
+    }
+
+    public String render(
+            final Mojo mojo
+    ) {
         return mojo.getI18nContext().getText(
-                "vivid.cherimoya.error.ce-4-class-read-failure",
+                I18N_KEY,
                 path
         );
     }

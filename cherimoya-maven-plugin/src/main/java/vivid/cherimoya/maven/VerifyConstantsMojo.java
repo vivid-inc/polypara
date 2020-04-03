@@ -16,6 +16,9 @@ package vivid.cherimoya.maven;
 
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
+import io.vavr.collection.Stream;
+import io.vavr.control.Either;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,6 +30,7 @@ import org.codehaus.plexus.i18n.I18N;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.objectweb.asm.ClassReader;
 import vivid.cherimoya.annotation.Constant;
 
 /**
@@ -216,15 +220,23 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
             // it in the local repository beforehand.
             // All versions under consideration are thus processed, both implied (the project)
             // and explicit (configured in the plugin section in the POM).
-            MavenArtifactResolution.mapVersionsToClassReaders(this, resolvableVersions)
+            final Either<Message, Map<String, Stream<ClassReader>>> mapping =
+                    MavenArtifactResolution.mapVersionsToClassReaders(this, resolvableVersions);
+            if (mapping.isLeft()) {
+                final Message message = mapping.getLeft();
+                throw new MojoExecutionException(
+                        message.render(this),
+                        message.getCause().getOrNull()
+                );
+            }
 
-                    // Given a mapping from version strings to Jar file paths, scan each of
-                    // the Java class files within the Jars, looking for fields annotated
-                    // with our Constant annotation.
-                    .map((v, cr) -> new Tuple2<>(v, AsmScanner.scan(
-                            new AsmFieldAnnotationScanner(this, Constant.class),
-                            List.ofAll(cr)
-                    )))
+            // Given a mapping from version strings to Jar file paths, scan each of
+            // the Java class files within the Jars, looking for fields annotated
+            // with our Constant annotation.
+            mapping.get().map((v, cr) -> new Tuple2<>(v, AsmScanner.scan(
+                    new AsmFieldAnnotationScanner(this, Constant.class),
+                    List.ofAll(cr)
+            )))
 
                     // Store found fields and their values per version in the database.
                     .forEach(constantsData::recordConstantFields);
@@ -258,10 +270,12 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
         } catch (final MojoFailureException e) {
             throw e;
         } catch (final Exception e) {
-            throw CE1InternalError.asNewMojoExecutionException(
-                    this,
-                    "Unexpected exception",
-                    e
+            throw new MojoExecutionException(
+                    CE1InternalError.message(
+                            "Unexpected exception",
+                            e
+                    )
+                    .render(this)
             );
         }
     }

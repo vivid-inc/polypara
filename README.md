@@ -127,7 +127,7 @@ mvn ... -Dcherimoya.skip ...
 
 
 
-## Development
+## Contributing
 
 Run the tests and build the deliverables:
 
@@ -149,6 +149,7 @@ Do:
 - Improve test coverage.
 - Support the refactoring of a `@Constant` field's FQN or type.
 - Bake motivation, principles, and design decisions into the documentation and the code.
+
 
 
 © Copyright Vivid Inc.

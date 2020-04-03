@@ -14,8 +14,11 @@
 
 package vivid.cherimoya.maven;
 
+import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
+import io.vavr.collection.Stream;
+import io.vavr.control.Either;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -34,47 +37,62 @@ class MavenArtifactResolution {
         // Hide the public constructor
     }
 
-    static Map<String, java.util.List<ClassReader>> mapVersionsToClassReaders(
+    static Either<Message, Map<String, Stream<ClassReader>>> mapVersionsToClassReaders(
             final Mojo mojo,
             final List<String> resolvableVersions
     ) {
-        return resolvableVersions.toMap(
-                v -> v,
-                v -> classReaderForResolvableVersion(
+        final Either<Message, Stream<ClassReader>> currentVersionClassReaders =
+                AsmClassReaders.fromFile(
                         mojo,
-                        mojo.getMavenProject().getGroupId(),
-                        mojo.getMavenProject().getArtifactId(),
-                        v)
-        )
-                .put(
-                        mojo.getMavenProject().getVersion(),
-                        AsmClassReaders.fromFile(
-                                mojo,
-                                new File(
-                                        mojo.getMavenProject().getBuild().getOutputDirectory()
-                                )
+                        new File( mojo.getMavenProject().getBuild().getOutputDirectory() )
+                );
+        final Either<Message, Map<String, Stream<ClassReader>>> mapping =
+                currentVersionClassReaders.map(val ->
+                        HashMap.of(
+                                mojo.getMavenProject().getVersion(),
+                                val
                         )
+                );
+
+        return
+                resolvableVersions.foldLeft(
+                        mapping,
+                        (m, version) -> {
+                            if (mapping.isLeft()) {
+                                return mapping;
+                            }
+                            final Either<Message, Stream<ClassReader>> ret = classReaderForResolvableVersion(
+                                    mojo,
+                                    mojo.getMavenProject().getGroupId(),
+                                    mojo.getMavenProject().getArtifactId(),
+                                    version
+                            );
+                            if (ret.isLeft()) {
+                                return Either.left(ret.getLeft());
+                            }
+
+                            return Either.right(
+                                    mapping.get().put(
+                                            version,
+                                            ret.get()
+                                    )
+                            );
+                        }
                 );
     }
 
-    private static java.util.List<ClassReader> classReaderForResolvableVersion(
+    private static Either<Message, Stream<ClassReader>> classReaderForResolvableVersion(
             final Mojo mojo,
             final String groupId,
             final String artifactId,
             final String version
     ) {
-        final ArtifactResult artifactResult = resolveArtifact(
-                mojo,
-                groupId, artifactId, version
-        );
-
-        return AsmClassReaders.fromJarFile(
-                mojo,
-                artifactResult.getArtifact().getFile()
-        );
+        return
+                resolveArtifact(mojo, groupId, artifactId, version)
+                        .flatMap(ar -> AsmClassReaders.fromJarFile(mojo, ar.getArtifact().getFile()));
     }
 
-    private static ArtifactResult resolveArtifact(
+    private static Either<Message, ArtifactResult> resolveArtifact(
             final Mojo mojo,
             final String groupId,
             final String artifactId,
@@ -93,17 +111,18 @@ class MavenArtifactResolution {
         artifactRequest.setRepositories(mojo.getRemoteRepositories());
 
         try {
-            return mojo.getRepositorySystem().resolveArtifact(
-                    mojo.getRepositorySystemSession(),
-                    artifactRequest
+            return Either.right(
+                    mojo.getRepositorySystem().resolveArtifact(
+                            mojo.getRepositorySystemSession(),
+                            artifactRequest
+                    )
             );
         } catch (final ArtifactResolutionException e) {
-            throw new SneakyMojoException(
-                    mojo.getI18nContext().getText(
-                            "vivid.cherimoya.error.ce-3-artifact-resolution-failure",
-                            gav
-                    ),
-                    e
+            return Either.left(
+                    CE3ArtifactResolutionFailure.message(
+                            gav,
+                            e
+                    )
             );
         }
     }
