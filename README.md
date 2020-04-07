@@ -1,23 +1,23 @@
-# Vivid Cherimoya
+# Vivid Polypara
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](LICENSE.txt)
-[![Current version](https://img.shields.io/clojars/v/vivid.cherimoya/cherimoya-maven-plugin?color=blue&style=flat-square)](https://clojars.org/search?q=vivid.cherimoya)
-[![CircleCI build status](https://circleci.com/gh/vivid-inc/cherimoya/tree/release-0.3.0.svg)](https://circleci.com/gh/vivid-inc/cherimoya)
-[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_cherimoya&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_cherimoya)
+[![Current version](https://img.shields.io/clojars/v/vivid.polypara/polypara-maven-plugin?color=blue&style=flat-square)](https://clojars.org/search?q=vivid.polypara)
+[![CircleCI build status](https://circleci.com/gh/vivid-inc/polypara/tree/release-0.4.0.svg)](https://circleci.com/gh/vivid-inc/polypara)
+[![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=vivid-inc_polypara&metric=alert_status)](https://sonarcloud.io/dashboard?id=vivid-inc_polypara)
 
 
-Automated verification of Java field value constancy across release versions.
+ポリパラ   Automated verification of Java field value constancy across release versions.
 
 
 For when you look at a constant field in Java and think to yourself: "The value of this field *must not change*, even in successive versions."
 Appropriate for values that are exposed to and relied upon by software outside of your realm of concern or with whom you have a standing promise to keep keywords stable, such as API clients and database values.
 Its intentionalist approach enhances your pull-request code reviews and build log reviews.
 
-Cherimoya is comprised of a feather-weight Java annotation and a Maven plugin that optionally breaks the build in cases of violations.
+Polypara is comprised of a feather-weight Java annotation and a Maven plugin that optionally breaks the build in cases of violations.
 Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3.3+.
 
 
-## Using Cherimoya in your project
+## Using Polypara in your project
 
 First, ensure that Maven can resolve artifacts through [Clojars](https://clojars.org/) for dependency and Maven plugin resolution with this snippet:
 ```xml
@@ -27,12 +27,12 @@ First, ensure that Maven can resolve artifacts through [Clojars](https://clojars
 </repository>
 ```
 
-In your Maven `pom.xml`, add a dependency to Cherimoya's lightweight library containing the `@Constant` annotation:
+In your Maven `pom.xml`, add a dependency to Polypara's lightweight library containing the `@Constant` annotation:
 
 ```xml
 <dependency>
-    <groupId>vivid.cherimoya</groupId>
-    <artifactId>cherimoya</artifactId>
+    <groupId>vivid.polypara</groupId>
+    <artifactId>polypara</artifactId>
     <version>1.0.0</version>
     <scope>compile</scope>
 </dependency>
@@ -46,9 +46,9 @@ static final int PaymentProcessingTimeoutSecs = 30;
 ```
 
 The annotation itself is retained in Java class files but not during runtime.
-Cherimoya depends on the field value's `equals` method for determining constancy between versions.
+Polypara depends on the field value's `equals` method for determining constancy between versions.
 
-Include Cherimoya's verification step in your Maven build by adding the following segment to your Maven `pom.xml`.
+Include Polypara's verification step in your Maven build by adding the following segment to your Maven `pom.xml`.
 List each version of your project in the order they were released.
 The order of appearance is important because it sets the sequential progression of release version; the ordering directly affects how field value changes are detected and reported.
 
@@ -59,9 +59,9 @@ Alternatively, it can be explicitly added to the version list to control orderin
 <build>
     ...
     <plugin>
-        <groupId>vivid.cherimoya</groupId>
-        <artifactId>cherimoya-maven-plugin</artifactId>
-        <version>0.3.0</version>
+        <groupId>vivid.polypara</groupId>
+        <artifactId>polypara-maven-plugin</artifactId>
+        <version>0.4.0</version>
         <executions>
             <execution>
                 <goals>
@@ -87,7 +87,7 @@ Run the build to confirm whether your `@Constant` field values are indeed consta
 ```bash
 $ mvn install
 ...
-[INFO] --- cherimoya-maven-plugin:0.3.0:verify (default) @ spyra-levorg ---
+[INFO] --- polypara-maven-plugin:0.4.0:verify (default) @ spyra-levorg ---
 [INFO] Verifying constancy of @Constant field values in 17 versions of com.spyra:levorg  0.2  0.2.1  ...
 [INFO]
 [ERROR] @Constant field value violation:  com.spyra.levorg.internal.db.PaymentProcessingTimeoutSecs
@@ -119,10 +119,10 @@ __Skip execution__ by setting the `skip` configuration property to `true` within
 </configuration>
 ```
 
-or by defining the `cherimoya.skip` system property as an argument to `mvn` at the CLI:
+or by defining the `polypara.skip` system property as an argument to `mvn` at the CLI:
 
 ```bash
-mvn ... -Dcherimoya.skip ...
+mvn ... -Dpolypara.skip ...
 ```
 
 
@@ -140,9 +140,9 @@ bin/test.sh
 ## TODO
 
 Document:
-- Cherimoya applies to a single artifact version.
+- Polypara applies to a single artifact version.
 - The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant. If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
-- The impact that using Cherimoya has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
+- The impact that using Polypara has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
 - Expect results after two different versions of your project are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
 
 Do:

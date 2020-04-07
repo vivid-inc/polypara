@@ -2,7 +2,7 @@
 
 <!--
 
-    Copyright 2017 The Cherimoya Authors
+    Copyright 2017 The Polypara Authors
 
     Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
     in compliance with the License. You may obtain a copy of the License at
@@ -22,9 +22,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>vivid.cherimoya</groupId>
-    <artifactId>cherimoya-parent</artifactId>
-    <version>0.3.0</version>
+    <groupId>vivid.polypara</groupId>
+    <artifactId>polypara-parent</artifactId>
+    <version>0.4.0</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -32,14 +32,14 @@
         <url>https://vivid-inc.net</url>
     </organization>
 
-    <name>Cherimoya Parent</name>
-    <description>Parent POM of Vivid Cherimoya artifacts</description>
+    <name>Polypara Parent</name>
+    <description>Parent POM of Vivid Polypara artifacts</description>
     <inceptionYear>2017</inceptionYear>
-    <url>https://github.com/vivid-inc/cherimoya</url>
+    <url>https://github.com/vivid-inc/polypara</url>
 
     <ciManagement>
         <system>CircleCI</system>
-        <url>https://circleci.com/gh/vivid-inc/cherimoya</url>
+        <url>https://circleci.com/gh/vivid-inc/polypara</url>
     </ciManagement>
     <distributionManagement>
         <repository>
@@ -49,7 +49,7 @@
     </distributionManagement>
     <issueManagement>
         <system>GitHub issues</system>
-        <url>https://github.com/vivid-inc/cherimoya/issues</url>
+        <url>https://github.com/vivid-inc/polypara/issues</url>
     </issueManagement>
     <licenses>
         <license>
@@ -60,12 +60,12 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/vivid-inc/cherimoya</url>
+        <url>https://github.com/vivid-inc/polypara</url>
     </scm>
 
     <modules>
-        <module>cherimoya</module>
-        <module>cherimoya-maven-plugin</module>
+        <module>polypara</module>
+        <module>polypara-maven-plugin</module>
     </modules>
 
     <properties>
@@ -124,12 +124,12 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>3.0</version>
                     <configuration>
-                        <header>${cherimoya.basedir}/assets/license/APACHE-2-template.txt</header>
+                        <header>${polypara.basedir}/assets/license/APACHE-2-template.txt</header>
                         <headerDefinitions>
-                            <headerDefinition>${cherimoya.basedir}/assets/license/license-maven-plugin-javadoc.xml</headerDefinition>
+                            <headerDefinition>${polypara.basedir}/assets/license/license-maven-plugin-javadoc.xml</headerDefinition>
                         </headerDefinitions>
                         <properties>
-                            <owner>The Cherimoya Authors</owner>
+                            <owner>The Polypara Authors</owner>
                         </properties>
                         <includes>
                             <include>pom.xml</include>
@@ -285,10 +285,10 @@
                         </goals>
                         <phase>initialize</phase>
                         <configuration>
-                            <property>cherimoya.basedir</property>
+                            <property>polypara.basedir</property>
                             <project>
-                                <groupId>vivid.cherimoya</groupId>
-                                <artifactId>cherimoya-parent</artifactId>
+                                <groupId>vivid.polypara</groupId>
+                                <artifactId>polypara-parent</artifactId>
                             </project>
                         </configuration>
                     </execution>
@@ -336,7 +336,7 @@
         <profile>
             <id>sonarcloud</id>
             <properties>
-                <sonar.projectKey>vivid-inc_cherimoya</sonar.projectKey>
+                <sonar.projectKey>vivid-inc_polypara</sonar.projectKey>
                 <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
                 <sonar.organization>vivid</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>

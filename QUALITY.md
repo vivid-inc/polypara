@@ -1,15 +1,15 @@
-# How Cherimoya is Tested
+# How Polypara is Tested
 
 _Referencing [How SQLite Is Tested](https://www.sqlite.org/testing.html)_
 
-Reliability of Cherimoya is achieved in part by thorough and careful automated testing.
+Reliability of Polypara is achieved in part by thorough and careful automated testing.
 The range of testing covers the annotation library and the Maven plugin, documented examples, and assumed common execution environments (JDK and Maven versions).
 
 
 
 ## Regression testing
 
-Defects reported against Cherimoya cannot be considered as resolved until automated tests express the defect and prove remediation, within reason.
+Defects reported against Polypara cannot be considered as resolved until automated tests express the defect and prove remediation, within reason.
 These regression tests ensure that prior defects do not re-emerge in future.
 
 

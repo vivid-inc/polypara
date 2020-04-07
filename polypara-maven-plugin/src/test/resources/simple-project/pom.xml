@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- This project consists of the versions 1 and 2 -->
+
+    <groupId>vivid.polypara.test</groupId>
+    <artifactId>simple-project</artifactId>
+    <version>2</version>
+    <packaging>jar</packaging>
+
+    <name>Vivid Polypara test: Simple project</name>
+    <description>
+        A simple integration test verifying the basic use case of Polypara's @Constant field annotation.
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>vivid.polypara</groupId>
+            <artifactId>polypara</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>vivid.polypara</groupId>
+                <artifactId>polypara-maven-plugin</artifactId>
+                <configuration>
+                    <versions>
+                        <version>1</version>
+                        <!-- The current version (2) is included automatically -->
+                    </versions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
