@@ -57,8 +57,8 @@ class MavenArtifactResolution {
                 resolvableVersions.foldLeft(
                         mapping,
                         (m, version) -> {
-                            if (mapping.isLeft()) {
-                                return mapping;
+                            if (m.isLeft()) {
+                                return m;
                             }
                             final Either<Message, List<ClassReader>> ret = classReaderForResolvableVersion(
                                     mojo,
@@ -71,7 +71,7 @@ class MavenArtifactResolution {
                             }
 
                             return Either.right(
-                                    mapping.get().put(
+                                    m.get().put(
                                             version,
                                             ret.get()
                                     )

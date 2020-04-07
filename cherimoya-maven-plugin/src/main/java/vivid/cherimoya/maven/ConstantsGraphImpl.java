@@ -353,9 +353,9 @@ class ConstantsGraphImpl
                             final SortedMap<SimpleVersionRange, Option<Object>> histHead = undefVal.test(roughHistory.take(1).get()) ? hist.drop(1) : hist;
                             return undefVal.test(histHead.takeRight(1).get()) ? histHead.dropRight(1) : histHead;
                         };
-mojo.getLog().info("-- undefVal: " + undefVal);
+
                 final SortedMap<SimpleVersionRange, Option<Object>> fineHistory =
-                        trimUndefValEnds.apply(roughHistory);
+                        roughHistory.size() >= 2 ? trimUndefValEnds.apply(roughHistory) : roughHistory;
 
                 if (fineHistory.isEmpty()) {
                     throw new SneakyMojoException(
