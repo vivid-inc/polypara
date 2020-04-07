@@ -1,7 +1,6 @@
 # Vivid Cherimoya Changelog
 
 ## [0.3.0]
-__Unreleased__
 - cherimoya-junit5 conveniences for JUnit5 users.
 
 ## [0.2.0]
