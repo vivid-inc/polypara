@@ -16,7 +16,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - cherimoya-{{ checksum "pom.xml" }}
+            - cherimoya-{{ checksum "pom.xml" }}-{{ checksum "cherimoya/pom.xml" }}-{{ checksum "cherimoya-maven-plugin/pom.xml" }}
             - cherimoya
       - run:
           name: Install Cherimoya annotation library

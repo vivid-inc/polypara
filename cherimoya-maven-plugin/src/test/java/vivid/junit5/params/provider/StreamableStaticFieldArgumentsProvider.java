@@ -12,7 +12,7 @@
  * the License.
  */
 
-package vivid.cherimoya.junit5.params.provider;
+package vivid.junit5.params.provider;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;

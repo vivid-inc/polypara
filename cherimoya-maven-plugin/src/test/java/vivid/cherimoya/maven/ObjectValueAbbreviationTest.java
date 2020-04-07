@@ -17,7 +17,7 @@ package vivid.cherimoya.maven;
 import io.vavr.collection.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
+import vivid.junit5.params.provider.StreamableStaticFieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

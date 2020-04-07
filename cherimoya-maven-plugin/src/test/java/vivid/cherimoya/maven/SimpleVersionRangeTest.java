@@ -19,7 +19,7 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import vivid.cherimoya.junit5.params.provider.StreamableStaticFieldSource;
+import vivid.junit5.params.provider.StreamableStaticFieldSource;
 import vivid.cherimoya.maven.testing.Algorithms;
 
 import java.util.function.BiFunction;

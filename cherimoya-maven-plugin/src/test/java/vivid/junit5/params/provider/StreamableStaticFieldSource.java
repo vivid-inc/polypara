@@ -12,9 +12,10 @@
  * the License.
  */
 
-package vivid.cherimoya.junit5.params.provider;
+package vivid.junit5.params.provider;
 
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import vivid.junit5.params.provider.StreamableStaticFieldArgumentsProvider;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
