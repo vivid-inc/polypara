@@ -1,6 +1,8 @@
 # Vivid Cherimoya Changelog
 
 ## [0.3.0]
+- Internal code improvements (replacing some use of SneakyException with Either<L,R> for example).
+- Fixes a defect computing the abbreviated history of a @Constant field present in only two versions.
 
 ## [0.2.0]
 - cherimoya-maven-plugin verify goal functions, simplistically.
