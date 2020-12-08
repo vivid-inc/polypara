@@ -19,8 +19,8 @@ jobs:
             - polypara-{{ checksum "pom.xml" }}-{{ checksum "polypara/pom.xml" }}-{{ checksum "polypara-maven-plugin/pom.xml" }}
             - polypara
       - run:
-          name: Install Cherimoya annotation library
-          working_directory: ~/repo/polypara
+          name: Install Polypara annotation library
+          working_directory: ~/repo
           command: mvn install -B
       - run: mvn dependency:go-offline -B
       - run:
