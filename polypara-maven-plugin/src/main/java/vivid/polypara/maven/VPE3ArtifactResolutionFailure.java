@@ -17,34 +17,31 @@ package vivid.polypara.maven;
 import io.vavr.control.Option;
 
 /**
- * @since 0.2.0
+ * @since 0.3.0
  */
-class CE4ClassReadFailure implements Message {
+public class VPE3ArtifactResolutionFailure implements Message {
 
-    private static final String I18N_KEY = "vivid.polypara.error.ce-4-class-read-failure";
+    private static final String I18N_KEY = "vivid.polypara.error.vpe-3-artifact-resolution-failure";
 
     private final Option<Exception> cause;
-    private final String path;
+    private final String gav;
 
-    private CE4ClassReadFailure(
-            final String path,
-            final Option<Exception> cause
+    private VPE3ArtifactResolutionFailure(
+            final Option<Exception> cause,
+            final String gav
     ) {
-        this.path = path;
         this.cause = cause;
+        this.gav = gav;
     }
 
     static Message message(
-            final String path
+            final String gav,
+            final Exception e
     ) {
-        return new CE4ClassReadFailure(path, Option.none());
-    }
-
-    static Message message(
-            final String path,
-            final Exception cause
-    ) {
-        return new CE4ClassReadFailure(path, Option.of(cause));
+        return new VPE3ArtifactResolutionFailure(
+                Option.of(e),
+                gav
+        );
     }
 
     @Override
@@ -52,12 +49,13 @@ class CE4ClassReadFailure implements Message {
         return cause;
     }
 
+    @Override
     public String render(
             final Mojo mojo
     ) {
         return mojo.getI18nContext().getText(
                 I18N_KEY,
-                path
+                gav
         );
     }
 

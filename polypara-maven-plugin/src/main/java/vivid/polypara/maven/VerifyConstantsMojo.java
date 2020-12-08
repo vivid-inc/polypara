@@ -17,7 +17,6 @@ package vivid.polypara.maven;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
-import io.vavr.collection.Stream;
 import io.vavr.control.Either;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -187,7 +186,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
 
         if (allVersions.size() == 1) {
             getLog().warn(i18nContext.getText(
-                    "vivid.polypara.warning.cw-1-skipping-execution-due-to-singular-version",
+                    "vivid.polypara.warning.vpw-1-skipping-execution-due-to-singular-version",
                     mavenProject.getVersion(),
                     Static.mavenGAOf(mavenProject))
             );
@@ -261,7 +260,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
             if (!violations.isEmpty() && reportingLevel == ReportingLevel.ERROR) {
                 throw new MojoFailureException(
                         i18nContext.getText(
-                                "vivid.polypara.error.ce-2-field-value-constancy-verification-failed"
+                                "vivid.polypara.error.vpe-2-field-value-constancy-verification-failed"
                         )
                 );
             }
@@ -271,7 +270,7 @@ public class VerifyConstantsMojo extends AbstractMojo implements Mojo {
             throw e;
         } catch (final Exception e) {
             throw new MojoExecutionException(
-                    CE1InternalError.message(
+                    VPE1InternalError.message(
                             "Unexpected exception",
                             e
                     )

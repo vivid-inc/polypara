@@ -65,7 +65,7 @@ class AsmClassReaders {
             );
         } catch (final IOException e) {
             return Either.left(
-                    CE4ClassReadFailure.message(
+                    VPE4ClassReadFailure.message(
                             path.toString(),
                             e
                     )
@@ -107,7 +107,7 @@ class AsmClassReaders {
             );
         } catch (final IOException e) {
             return Either.left(
-                    CE4ClassReadFailure.message(
+                    VPE4ClassReadFailure.message(
                             jarFile.toString(),
                             e
                     )
@@ -144,7 +144,7 @@ class AsmClassReaders {
                             .flatMap(identity()));
         } catch (final IOException e) {
             return Either.left(
-                    CE4ClassReadFailure.message(
+                    VPE4ClassReadFailure.message(
                             file.getAbsolutePath(),
                             e
                     )
@@ -161,7 +161,7 @@ class AsmClassReaders {
                             .filter(Files::isRegularFile)));
         } catch (final IOException e) {
             return Either.left(
-                    CE4ClassReadFailure.message(
+                    VPE4ClassReadFailure.message(
                             file.getAbsolutePath(),
                             e
                     )

@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>vivid.polypara</groupId>
-    <artifactId>polypara-parent</artifactId>
+    <artifactId>polypara</artifactId>
     <version>0.4.0</version>
     <packaging>pom</packaging>
 
@@ -64,7 +64,7 @@
     </scm>
 
     <modules>
-        <module>polypara</module>
+        <module>polypara-annotations</module>
         <module>polypara-maven-plugin</module>
     </modules>
 
@@ -288,7 +288,7 @@
                             <property>polypara.basedir</property>
                             <project>
                                 <groupId>vivid.polypara</groupId>
-                                <artifactId>polypara-parent</artifactId>
+                                <artifactId>polypara</artifactId>
                             </project>
                         </configuration>
                     </execution>

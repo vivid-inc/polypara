@@ -360,7 +360,7 @@ class ConstantsGraphImpl
                 if (fineHistory.isEmpty()) {
                     throw new SneakyMojoException(
                             new MojoExecutionException(
-                                    CE1InternalError.message(
+                                    VPE1InternalError.message(
                                             String.format(
                                                     "Field %s was recorded as being subject to @Constant constraints " +
                                                             "but was calculated as not being defined in any version",

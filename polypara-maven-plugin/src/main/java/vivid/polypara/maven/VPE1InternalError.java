@@ -19,14 +19,14 @@ import io.vavr.control.Option;
 /**
  * @since 0.2.0
  */
-class CE1InternalError implements Message {
+class VPE1InternalError implements Message {
 
-    private static final String I18N_KEY = "vivid.polypara.error.ce-1-internal-error";
+    private static final String I18N_KEY = "vivid.polypara.error.vpe-1-internal-error";
 
     private final Option<Exception> cause;
     private final String message;
 
-    private CE1InternalError(
+    private VPE1InternalError(
             final Option<Exception> cause,
             final String message
     ) {
@@ -37,7 +37,7 @@ class CE1InternalError implements Message {
     static Message message(
             final String message
     ) {
-        return new CE1InternalError(
+        return new VPE1InternalError(
                 Option.none(),
                 message
         );
@@ -47,7 +47,7 @@ class CE1InternalError implements Message {
             final String message,
             final Exception cause
     ) {
-        return new CE1InternalError(
+        return new VPE1InternalError(
                 Option.of(cause),
                 message
         );

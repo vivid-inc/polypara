@@ -23,12 +23,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>vivid.polypara</groupId>
-        <artifactId>polypara-parent</artifactId>
+        <artifactId>polypara</artifactId>
         <version>0.4.0</version>
     </parent>
 
-    <artifactId>polypara</artifactId>
-    <version>1.0.0</version>
+    <artifactId>polypara-annotations</artifactId>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <organization>
@@ -36,7 +36,7 @@
         <url>https://vivid-inc.net</url>
     </organization>
 
-    <name>Polypara</name>
+    <name>Polypara Annotations</name>
     <description>Vivid Polypara lightweight annotations library</description>
     <inceptionYear>2017</inceptionYear>
     <url>https://github.com/vivid-inc/polypara</url>

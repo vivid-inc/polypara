@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>vivid.polypara</groupId>
-        <artifactId>polypara-parent</artifactId>
+        <artifactId>polypara</artifactId>
         <version>0.4.0</version>
     </parent>
 
@@ -91,8 +91,8 @@
         </dependency>
         <dependency>
             <groupId>vivid.polypara</groupId>
-            <artifactId>polypara</artifactId>
-            <version>1.0.0</version>
+            <artifactId>polypara-annotations</artifactId>
+            <version>1.1.0</version>
             <scope>compile</scope>
         </dependency>
 

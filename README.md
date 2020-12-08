@@ -11,28 +11,30 @@
 
 For when you look at a constant field in Java and think to yourself: "The value of this field *must not change*, even in successive versions."
 Appropriate for values that are exposed to and relied upon by software outside of your realm of concern or with whom you have a standing promise to keep keywords stable, such as API clients and database values.
-Its intentionalist approach enhances your pull-request code reviews and build log reviews.
+Its intentionalist approach adds rigor to your engineering process and enhances your pull-request code reviews and build log reviews.
 
-Polypara is comprised of a feather-weight Java annotation and a Maven plugin that optionally breaks the build in cases of violations.
+Polypara is comprised of a feather-weight Java annotation retained only in class files and a Maven plugin that optionally breaks the build in cases of violations.
 Developed, tested, and relied upon with Java JDK version 1.8+ and Apache Maven 3.3+.
 
 
 ## Using Polypara in your project
 
-First, ensure that Maven can resolve artifacts through [Clojars](https://clojars.org/) for dependency and Maven plugin resolution with this snippet:
+First, ensure your Maven build uses the Clojars repository for dependency and plugin resolution with this snippet:
 ```xml
 <repository>
     <id>clojars.org</id>
     <url>https://repo.clojars.org/</url>
 </repository>
 ```
+in each of the `<repositories>` and `<pluginRepositories>` sections in the appropriate Maven
+configuration, such as your `pom.xml`.
 
-In your Maven `pom.xml`, add a dependency to Polypara's lightweight library containing the `@Constant` annotation:
+In your Maven `pom.xml`, add a dependency to Polypara's lightweight library containing the annotations:
 
 ```xml
 <dependency>
     <groupId>vivid.polypara</groupId>
-    <artifactId>polypara</artifactId>
+    <artifactId>polypara-annotations</artifactId>
     <version>1.0.0</version>
     <scope>compile</scope>
 </dependency>
@@ -46,7 +48,7 @@ static final int PaymentProcessingTimeoutSecs = 30;
 ```
 
 The annotation itself is retained in Java class files but not during runtime.
-Polypara depends on the field value's `equals` method for determining constancy between versions.
+Polypara depends on the field value's `equals` method for determining value constancy between versions.
 
 Include Polypara's verification step in your Maven build by adding the following segment to your Maven `pom.xml`.
 List each version of your project in the order they were released.
@@ -96,11 +98,27 @@ $ mvn install
 ...
 ```
 
-__Record the rationale__ for marking a field `@Constant` using the annotation's `rationale` parameter:
+### Options
+
+__Record the rationale__ for specifying a field as `@Constant` using the annotation's optional `rationale` parameter:
 
 ```java
 @Constant(rationale = "Customers have already deployed production code that relies on this key")
-public String CRITICAL_API_PROPERTY_KEY = "listings";
+public static final String CRITICAL_API_PROPERTY_KEY = "accountID";
+```
+
+__Record a change of fully-qualified name (FQN)__ by adding an `@Alteration` record to its history:
+```java
+    @Constant(history = {@Alteration(version = "2", fromFQN = "previous.java.package.of.CRITICAL_API_PROPERTY_KEY")},
+             explanation = "")
+public static final String CRITICAL_API_PROPERTY_KEY = "accountID";
+```
+
+__Record a change of a `@Constant` field's value__
+```java
+    @Constant(history = {@Alteration(version = "2", valueChanged = true,
+             explanation = "")})
+public static final String CRITICAL_API_PROPERTY_KEY = "account-id";
 ```
 
 __Don't break the build__ by changing the `reportingLevel` configuration parameter from its default of `ERROR` to a `WARNING` instead:
@@ -135,6 +153,7 @@ Run the tests and build the deliverables:
 bin/test.sh
 ```
 
+The annotation source code can be quickly perused; it's brief and instructive. 
 
 
 ## TODO
@@ -147,7 +166,6 @@ Document:
 
 Do:
 - Improve test coverage.
-- Support the refactoring of a `@Constant` field's FQN or type.
 - Bake motivation, principles, and design decisions into the documentation and the code.
 
 

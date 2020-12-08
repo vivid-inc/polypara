@@ -118,7 +118,7 @@ class MavenArtifactResolution {
             );
         } catch (final ArtifactResolutionException e) {
             return Either.left(
-                    CE3ArtifactResolutionFailure.message(
+                    VPE3ArtifactResolutionFailure.message(
                             gav,
                             e
                     )

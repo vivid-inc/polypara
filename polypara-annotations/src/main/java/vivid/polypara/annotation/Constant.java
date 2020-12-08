@@ -67,4 +67,10 @@ public @interface Constant {
      */
     String[] rationale() default {};
 
+    /**
+     * History of controlled alterations to this field; a field that is otherwise meant to be held constant across
+     * releases.
+     */
+    Alteration[] history() default {};
+
 }

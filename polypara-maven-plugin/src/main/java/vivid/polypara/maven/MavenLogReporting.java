@@ -51,7 +51,7 @@ class MavenLogReporting {
         if (versionRangeColumnWidth.isEmpty()) {
             throw new SneakyMojoException(
                     new MojoExecutionException(
-                            CE1InternalError.message(
+                            VPE1InternalError.message(
                                     "Could not calculate the width of the version range column"
                             )
                                     .render(mojo))
@@ -108,7 +108,7 @@ class MavenLogReporting {
         } else {
             throw new SneakyMojoException(
                     new MojoExecutionException(
-                            CE1InternalError.message(
+                            VPE1InternalError.message(
                                     String.format(
                                             "Unexpected ReportingLevel value: %s",
                                             mojo.getReportingLevel()
