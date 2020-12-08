@@ -85,7 +85,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.0.0</version>
+                    <version>4.1.4</version>
                     <executions>
                         <execution>
                             <goals>
@@ -229,7 +229,16 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
+                </plugin>
+
+                <plugin>
+                    <!-- Note: This plugin isn't used; It's specified here merely to silence this Maven warning:
+                             [WARNING] The following plugins do not have their version specified:
+                             [WARNING]   maven-site-plugin ....................... (from super-pom) 3.9.1 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.9.1</version>
                 </plugin>
 
                 <plugin>
@@ -241,7 +250,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.5</version>
+                    <version>0.8.6</version>
                     <executions>
                         <execution>
                             <goals>
