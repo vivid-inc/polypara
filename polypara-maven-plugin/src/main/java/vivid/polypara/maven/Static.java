@@ -37,7 +37,7 @@ class Static {
     static final String POM_POLYPARA_REPORTING_LEVEL_CONFIGURATION_KEY = "reportingLevel";
 
     @Constant(rationale = DONT_MAKE_ME_THINK)
-    static final String POM_POLYPARA_SKIP_PROPERTY_KEY = "polypara.skip";
+    static final String POM_POLYPARA_SKIP_PROPERTY_KEY = "vivid.polypara.skip";
 
     @Constant(rationale = DONT_MAKE_ME_THINK)
     static final String POM_POLYPARA_VERIFY_MOJO_NAME = "verify";

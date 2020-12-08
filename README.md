@@ -48,7 +48,6 @@ static final int PaymentProcessingTimeoutSecs = 30;
 ```
 
 The annotation itself is retained in Java class files but not during runtime.
-Polypara depends on the field value's `equals` method for determining value constancy between versions.
 
 Include Polypara's verification step in your Maven build by adding the following segment to your Maven `pom.xml`.
 List each version of your project in the order they were released.
@@ -109,15 +108,19 @@ public static final String CRITICAL_API_PROPERTY_KEY = "accountID";
 
 __Record a change of fully-qualified name (FQN)__ by adding an `@Alteration` record to its history:
 ```java
-    @Constant(history = {@Alteration(version = "2", fromFQN = "previous.java.package.of.CRITICAL_API_PROPERTY_KEY")},
-             explanation = "")
+@Constant(..., history = {@Alteration(
+        version = "2.0.0",
+        fromFQN = "previous.java.package.of.CRITICAL_API_PROPERTY_KEY",
+        explanation = "See issue LEVORG-1234 where this was split from the main module into its own service")})
 public static final String CRITICAL_API_PROPERTY_KEY = "accountID";
 ```
 
 __Record a change of a `@Constant` field's value__
 ```java
-    @Constant(history = {@Alteration(version = "2", valueChanged = true,
-             explanation = "")})
+@Constant(..., history = {..., @Alteration(
+        version = "3.0.0",
+        valueChanged = true,
+        explanation = "This change of identifier has been thoroughly acknowledged by all customers (Ref: 2020-03-17 weekly meeting).")})
 public static final String CRITICAL_API_PROPERTY_KEY = "account-id";
 ```
 
@@ -137,11 +140,34 @@ __Skip execution__ by setting the `skip` configuration property to `true` within
 </configuration>
 ```
 
-or by defining the `polypara.skip` system property as an argument to `mvn` at the CLI:
+or by defining the `vivid.polypara.skip` system property as an argument to `mvn` at the CLI:
 
 ```bash
-mvn ... -Dpolypara.skip ...
+mvn ... -Dvivid.polypara.skip ...
 ```
+
+
+## Points of interest
+
+__Versioning__:
+Polypara applies to a single artifact, the POM within which it is defined.
+The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against.
+The type of the Maven project is irrelevant.
+If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
+
+__Starting Polypara__:
+When given only one version to inspect, such as when starting a new project, Polypara will skip verification as there are not other versions to compare `@Constant`s with.
+You can expect results from Polypara after two different versions of your project are in play.
+Also, when introducing Polypara into an established project that already has several versions, you can back-implement `@Constant` by releasing for example `1.3.1-1`.
+
+__Values__:
+Polypara depends on the field value's `equals` method for determining value constancy between versions.
+
+__Footprint__:
+The impact that Polypara has on your deliverables is that:
+- Select sources gain a new `@Constant` annotation and its inner companions.
+- These annotations are included in the JAR and made available on your compile classpaths.
+- Their references are retained in the compiled class files but not at runtime. 
 
 
 
@@ -158,13 +184,8 @@ The annotation source code can be quickly perused; it's brief and instructive.
 
 ## TODO
 
-Document:
-- Polypara applies to a single artifact version.
-- The only requirement of the build verification step is that there are Java .class files in the build output directory, and at least one other build artifact to compare against. The type of the Maven project is irrelevant. If `target/classes` is missing or there are no jars, the verify goal silently does nothing.
-- The impact that using Polypara has on your deliverables is that select classes are annotated with a single new class: the `@Constant` annotation. The annotation is included in the JAR and made available on the class path, and its reference is retained by the annotated class files.
-- Expect results after two different versions of your project are in play. You can back-implement `@Constant` by releasing for example `1.3.1-1`.
-
 Do:
+- Implement `@Alteration`
 - Improve test coverage.
 - Bake motivation, principles, and design decisions into the documentation and the code.
 
