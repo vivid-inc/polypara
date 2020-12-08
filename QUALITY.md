@@ -48,7 +48,8 @@ A VCS commit is considered releasable provided that all of its components satisf
 
 ## Release checklist
 
-Review the entirety of the release checklist before proceeding.
+Familiarize yourself with the entirety of this release checklist before proceeding.
+It informs you of what you need to be prepared to confirm has already been completed during each phase.
 
 #### Before release
 - Update [CHANGELOG.md](CHANGELOG.md) to reflect the new version.
