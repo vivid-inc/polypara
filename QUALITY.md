@@ -48,6 +48,8 @@ A VCS commit is considered releasable provided that all of its components satisf
 
 ## Release checklist
 
+Review the entirety of the release checklist before proceeding.
+
 #### Before release
 - Update [CHANGELOG.md](CHANGELOG.md) to reflect the new version.
   - Replace the `_Unreleased_` attribute with the actual date.
@@ -56,15 +58,15 @@ A VCS commit is considered releasable provided that all of its components satisf
 - Ensure the [release criteria](QUALITY.md) are satisfied.
 
 #### Executing the release
-- Send each component to JCenter.
+- Send each component to Clojars.
 - In Git, tag the release and push the tag to GitHub.
-- In GitHub, set the release and package.
+- In GitHub, change the default branch to the current release.
 
 #### Immediately after release
 - Smoke test each downloadable deliverable.
 - Confirm correctness of:
   - All project URLs.
   - Default branch in GitHub.
-  - Versions appearing in current documentation.
+  - Versions appearing in the current documentation.
 - Update [CHANGELOG.md](CHANGELOG.md) to reflect the next version.
   - Note this new version as `_Unreleased_`.
