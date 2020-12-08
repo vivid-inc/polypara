@@ -16,11 +16,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - cherimoya-{{ checksum "pom.xml" }}-{{ checksum "cherimoya/pom.xml" }}-{{ checksum "cherimoya-maven-plugin/pom.xml" }}
-            - cherimoya
+            - polypara-{{ checksum "pom.xml" }}-{{ checksum "polypara/pom.xml" }}-{{ checksum "polypara-maven-plugin/pom.xml" }}
+            - polypara
       - run:
           name: Install Cherimoya annotation library
-          working_directory: ~/repo/cherimoya
+          working_directory: ~/repo/polypara
           command: mvn install -B
       - run: mvn dependency:go-offline -B
       - run:
@@ -30,6 +30,6 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: cherimoya-{{ checksum "pom.xml" }}
+          key: polypara-{{ checksum "pom.xml" }}
       - store_test_results:
           path: target/surefire-reports
